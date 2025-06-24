@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Changed
+
+- TeraChem trajectory parsing now splits the optimization stdout into sections for each gradient call and runs `decode(...)` on each chunk. This fixes the excited state parsing bug mentioned in `Fixed` and setups up parser to be better isolated for their calculation type (e.g., no more `parse_gradients` but rather just `parse_gradient` for all cases of a single point calculation, even within an optimization workflow).
+- TeraChem logs for each gradient call in an optimization calculation are now added to each `ProgramOutput` in `OptimizationResults.trajectory`.
+
+### Fixed
+
+- Excited state parsing bug within an optimization calculation that would result in all excited states for the whole optimization calculation being added to each `ProgramOutput` in the `.trajectory`.
+
+### Removed
+
+- `terachem.parse_gradients` function now that that gradient parsing is done gradient call-by-gradient call for optimizations instead of in one batch.
+
 ## [0.7.6] - 2025-04-01
 
 ### Added

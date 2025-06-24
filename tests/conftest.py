@@ -84,6 +84,10 @@ class ParserTestCase:
         clear_registry: Boolean indicating if the registry should be cleared of all other
             parsers before running the test. Default is True.
         extra_files: Optional list of additional files to be copied to the test directory.
+        extra_files_names: Optional list of names for the extra files, these names will
+            be used as the filenames in the test directory. If not provided, the
+            filenames will be the same as in the extra_files list.
+
     """
 
     name: str
@@ -96,6 +100,7 @@ class ParserTestCase:
     answer: Optional[Any] = None
     clear_registry: bool = True
     extra_files: Optional[list[str]] = None
+    extra_files_names: Optional[list[str]] = None
 
 
 def _load_contents(directory, contents):
@@ -142,9 +147,10 @@ def _test_parser_direct(tc, contents, directory, prog_inp, parser_spec):
         else:
             # Successful execution of file parser
             parsed = tc.parser(contents)
-        assert (
-            parsed == tc.answer
-        ), f"{tc.name}: Direct parsing returned {parsed} instead of expected {tc.answer}"
+        assert parsed == tc.answer, (
+            f"{tc.name}: Direct parsing returned {parsed} instead of expected {tc.answer}"
+        )
+
     else:
         with pytest.raises(MatchNotFoundError):
             if parser_spec.filetype == "directory":
@@ -223,9 +229,9 @@ def _test_decode_integration(tc, contents, directory, prog_inp, program, parser_
                 as_dict=True,
             )
             final_value = get_target_value(result, parser_spec.target)
-            assert (
-                final_value in (None, {})
-            ), f"{tc.name}: decode() returned non-empty value {final_value} when an empty result was expected."
+            assert final_value in (None, {}), (
+                f"{tc.name}: decode() returned non-empty value {final_value} when an empty result was expected."
+            )
 
 
 @contextmanager
@@ -253,9 +259,14 @@ def run_test_harness(test_data_dir, prog_inp, tmp_path, tc):
 
     # Copy over extra files if provided.
     if tc.extra_files:
-        for extra_file in tc.extra_files:
+        # Use the extra_files_names if provided, otherwise use extra_files.
+        extra_files_names = tc.extra_files_names or tc.extra_files
+        for extra_file, extra_file_name in zip(tc.extra_files, extra_files_names):
             # Copy the extra file to the temporary directory.
-            shutil.copy(test_data_dir / program / extra_file, tmp_path / extra_file)
+            shutil.copy(
+                test_data_dir / program / extra_file,
+                tmp_path / extra_file_name,
+            )
 
     if not tc.contents_stdout:
         # If contents is not stdout, copy the test data files.

@@ -81,45 +81,29 @@ def parse_energy(contents: str) -> float:
     target="gradient",
 )
 def parse_gradient(contents: str) -> list[list[float]]:
-    """Parse the first gradient from TeraChem stdout.
+    """Parse the gradient from TeraChem stdout.
 
     Returns:
-        A single gradient as a list of 3-element lists.
+        The gradient as a list of 3-element lists.
 
     Raises:
         MatchNotFoundError: If no gradient data is found.
+
+    Notes:
+        - This works for exciting state gradients as well because TeraChem prints out
+            the targeted gradient as the "regular" gradient.
     """
-    gradients = parse_gradients(contents)
-    return gradients[0]
-
-
-def parse_gradients(contents: str) -> list[list[list[float]]]:
-    """Parse gradients from TeraChem stdout.
-
-    Args:
-        contents: The contents of the TeraChem stdout file.
-
-    Returns:
-        A list of gradients. Each gradient is a list of 3-element lists,
-        where each 3-element list represents the gradient for one atom.
-
-    Raises:
-        MatchNotFoundError: If no gradient data is found.
-    """
-    # Match all floats after the dE/dX dE/dY dE/dZ header
-    # until a terminating line (e.g., '--' or '-=') is encountered.
-    regex = r"(?<=dE\/dX\s{12}dE\/dY\s{12}dE\/dZ\n)[\d\.\-\s]+(?=\n(?:--|-=))"
-    matches = re_finditer(regex, contents)
-
-    gradients = []
-    for match in matches:
-        # Convert the found numbers to floats.
-        values = [float(val) for val in match.group(0).split()]
-        # Group the values into chunks of 3 (for x, y, z).
-        gradient = [values[i : i + 3] for i in range(0, len(values), 3)]
-        gradients.append(gradient)
-
-    return gradients
+    regex = (
+        r"(?<=dE\/dX\s{12}dE\/dY\s{12}dE\/dZ\n)"  # Just after the header line
+        r"[\d\.\-\s]"  # the gradient block itself
+        r"+(?=\n(?:--|-=|\Z))"  # top at -- (grad) or -= (opt) or end of file (when I manually split opt logs)
+    )
+    match = re_search(regex, contents)
+    # Convert the found numbers to floats.
+    values = [float(val) for val in match.group(0).split()]
+    # Group the values into chunks of 3 (for x, y, z).
+    gradient = [values[i : i + 3] for i in range(0, len(values), 3)]
+    return gradient
 
 
 @register(
@@ -230,14 +214,36 @@ def parse_trajectory(
     # Parse the structures
     structures = Structure.open_multi(directory / "optim.xyz")
 
-    # Parse the values from the stdout file
+    # Capture initialization stdout
+    regex = r"""^(.*?)                # group-1 = everything before the banner
+        (?=                       # look-ahead, do NOT consume banner
+            ^-{55}\s*\r?\n        # 55 dashes
+            0\ additional\ frames\ found\ in\ \S+\.xyz\s*\r?\n
+            -{55}                 # 55 dashes
+        )
+    """
+    match = re.search(
+        regex,
+        stdout,
+        flags=re.MULTILINE | re.VERBOSE | re.DOTALL,
+    )
+    if not match:
+        raise MatchNotFoundError(regex, stdout)
+    initialization_stdout = match.group(1)
+
+    # Capture the stdout for each gradient calculation
+    regex = r"-=#=-\s+\(We'll Be Right Back\)\s+-=#=-\n(.*?)-=#=-\s+Now Returning to Optimizer\s+-=#=-"
+    per_gradient_stdout = re.findall(regex, stdout, flags=re.DOTALL)
+    if not per_gradient_stdout:
+        raise MatchNotFoundError(regex, stdout)
+
+    # Parse the gradient values from the stdout file
     from qccodec import decode
 
-    parsed_results = decode("terachem", CalcType.energy, stdout=stdout)
-    gradients = parse_gradients(stdout)
     # Create the trajectory
     trajectory: list[ProgramOutput] = []
-    for structure, gradient in zip(structures, gradients):
+
+    for structure, grad_stdout in zip(structures, per_gradient_stdout):
         # Create input data object for each structure and gradient in the trajectory.
         input_data_obj = ProgramInput(
             calctype=CalcType.gradient,
@@ -246,10 +252,12 @@ def parse_trajectory(
             keywords=input_data.keywords,
         )
         # Create the results object for each structure and gradient in the trajectory.
+        full_grad_stdout = initialization_stdout + grad_stdout
+        parsed_results = decode("terachem", CalcType.gradient, stdout=full_grad_stdout)
         assert isinstance(parsed_results, SinglePointResults)  # for mypy
+
         spr_data = parsed_results.model_dump()
         spr_data["energy"] = structure.extras[Structure._xyz_comment_key][0]
-        spr_data["gradient"] = gradient
         results_obj = SinglePointResults(**spr_data)
         # Create the provenance object for each structure and gradient in the trajectory.
         prov = Provenance(
@@ -263,6 +271,7 @@ def parse_trajectory(
             success=True,
             results=results_obj,
             provenance=prov,
+            stdout=full_grad_stdout,
         )
         trajectory.append(traj_entry)
 

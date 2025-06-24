@@ -37,7 +37,7 @@ from qcio import CalcType
 from qccodec.utils import re_search
 
 
-@register(filetype=TeraChemFileType.STDOUT,calctypes=[CalcType.energy, CalcType.gradient], target="energy")
+@register(filetype=TeraChemFileType.STDOUT, calctypes=[CalcType.energy, CalcType.gradient], target="energy")
 def parse_energy(contents: str) -> float:
     """
     Parse the final energy from TeraChem stdout.
