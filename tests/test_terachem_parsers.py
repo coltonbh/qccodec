@@ -10,7 +10,6 @@ from qccodec.parsers.terachem import (
     parse_energy,
     parse_excited_states,
     parse_gradient,
-    parse_gradients,
     parse_hessian,
     parse_natoms,
     parse_nmo,
@@ -246,6 +245,18 @@ test_cases = [
         clear_registry=False,
         extra_files=["optim.xyz"],
     ),
+    ParserTestCase(
+        name="Parse trajectory excited state",
+        parser=parse_trajectory,
+        contents=Path("excited-state-opt.out"),
+        contents_stdout=True,
+        calctype=CalcType.optimization,
+        success=True,
+        answer=trajectories.es_trajectory,
+        clear_registry=False,
+        extra_files=["es_optim.xyz"],
+        extra_files_names=["optim.xyz"],
+    ),
 ]
 
 
@@ -255,12 +266,13 @@ def test_terachem_parsers(test_data_dir, prog_inp, tmp_path, test_case):
     Tests the terachem parsers to ensure that they correctly parse the output files and
     behave correctly within the decode function.
     """
-    if test_case.name == "Parse trajectory":
+    # Water and excited state successful trajectories
+    if test_case.success and "Parse trajectory" in test_case.name:
         # Update scratch_dir to the tmp_path for the trajectory test case
-        for i in range(len(trajectories.trajectory)):
-            po_dict = trajectories.trajectory[i].model_dump()
+        for i in range(len(test_case.answer)):
+            po_dict = test_case.answer[i].model_dump()
             po_dict["provenance"]["scratch_dir"] = tmp_path
-            trajectories.trajectory[i] = ProgramOutput(**po_dict)
+            test_case.answer[i] = ProgramOutput(**po_dict)
 
     run_test_harness(test_data_dir, prog_inp, tmp_path, test_case)
 
@@ -276,12 +288,6 @@ def test_parse_git_commit(terachem_file):
         parse_version_control_details(contents)
         == "4daa16dd21e78d64be5415f7663c3d7c2785203c"  # pragma: allowlist secret
     )
-
-
-def test_parse_gradients(terachem_file):
-    contents = terachem_file("water.opt.out")
-    parsed_gradients = parse_gradients(contents)
-    assert parsed_gradients == gradients.water_opt
 
 
 def test_parse_excited_states_raises_exception_no_excited_states(terachem_file):
