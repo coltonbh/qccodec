@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.7.7] - 2025-06-23
+
 ### Changed
 
 - TeraChem trajectory parsing now splits the optimization stdout into sections for each gradient call and runs `decode(...)` on each chunk. This fixes the excited state parsing bug mentioned in `Fixed` and setups up parser to be better isolated for their calculation type (e.g., no more `parse_gradients` but rather just `parse_gradient` for all cases of a single point calculation, even within an optimization workflow).
@@ -207,7 +209,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Can return either `AtomicResult` or `FailedOperation` objects depending on whether calculation succeeded or failed.
 - Tests for all parsers and the main `parse` function.
 
-[unreleased]: https://github.com/coltonbh/qccodec/compare/0.7.6...HEAD
+[unreleased]: https://github.com/coltonbh/qccodec/compare/0.7.7...HEAD
+[0.7.7]: https://github.com/coltonbh/qccodec/releases/tag/0.7.7
 [0.7.6]: https://github.com/coltonbh/qccodec/releases/tag/0.7.6
 [0.7.5]: https://github.com/coltonbh/qccodec/releases/tag/0.7.5
 [0.7.4]: https://github.com/coltonbh/qccodec/releases/tag/0.7.4
