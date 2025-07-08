@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any, Generator, Optional, Union
 
 import numpy as np
+from qcconst import constants
 from qcio import (
     CalcType,
     ProgramInput,
@@ -12,7 +13,6 @@ from qcio import (
     Provenance,
     SinglePointResults,
     Structure,
-    constants,
 )
 
 from qccodec.exceptions import ParserError
