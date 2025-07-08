@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Fixed
+
+- `crest` parsers imported missing `qcio.constants` module. Updated to `qcconst.constants`.
+
+### Changed
+
+- Bumped minimum `qcconst` version from `0.1.2` to `0.2.1` to fix `mypy` issue.
+
 ## [0.7.7] - 2025-06-23
 
 ### Changed

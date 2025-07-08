@@ -595,7 +595,7 @@ wheels = [
 
 [[package]]
 name = "qccodec"
-version = "0.7.6"
+version = "0.7.7"
 source = { editable = "." }
 dependencies = [
     { name = "qcconst" },
@@ -615,7 +615,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "qcconst", specifier = ">=0.1.1" },
+    { name = "qcconst", specifier = ">=0.2.1" },
     { name = "qcio", specifier = ">=0.14.0" },
     { name = "tomli-w", specifier = ">=1.0.0" },
 ]
@@ -632,14 +632,11 @@ dev = [
 
 [[package]]
 name = "qcconst"
-version = "0.1.1"
+version = "0.2.1"
 source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "tabulate" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/19/bd/0a1c57edd63d4adbb3c2c546933c237850f22091de24d65efa301d9a6a4f/qcconst-0.1.1.tar.gz", hash = "sha256:26b0dfc1695986015763ff7b49c18d0bc322cda76d0aa672b0b3da3649698cf6", size = 40234 }
+sdist = { url = "https://files.pythonhosted.org/packages/04/9b/5e257bfa14fb4abc6f90b5109c51d697f3e412b4afeac008b6ebaf92f36c/qcconst-0.2.1.tar.gz", hash = "sha256:97aee85ba2ba078eb076dc0544737fe59206cf68d8efababc57e4578b7e4595a", size = 56039 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/76/76/da551cdb0f9fd6012b9ac2cdbc5e469c0cb0d949741b10cacc9d870d32c9/qcconst-0.1.1-py3-none-any.whl", hash = "sha256:30d8b540b77af20146bcf073ca11c6cbc32e157108fd8e051ae9f15c2ee5fd8c", size = 18716 },
+    { url = "https://files.pythonhosted.org/packages/93/d7/f12f520a35d8ff5cd647d37627bcf1be98f701c4ab69b520164214ba7e77/qcconst-0.2.1-py3-none-any.whl", hash = "sha256:2c1489e60909ac03daa448a06b59705376be6d71d6d0cee1caecde5517559206", size = 34094 },
 ]
 
 [[package]]
@@ -683,15 +680,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/d9/3a/a647fa4f316482dacf2fd68e8a386327a33d6eabd8eb2f9a0c3d291ec549/ruff-0.11.2-py3-none-win32.whl", hash = "sha256:aca01ccd0eb5eb7156b324cfaa088586f06a86d9e5314b0eb330cb48415097cc", size = 10319835 },
     { url = "https://files.pythonhosted.org/packages/86/54/3c12d3af58012a5e2cd7ebdbe9983f4834af3f8cbea0e8a8c74fa1e23b2b/ruff-0.11.2-py3-none-win_amd64.whl", hash = "sha256:3170150172a8f994136c0c66f494edf199a0bbea7a409f649e4bc8f4d7084080", size = 11373713 },
     { url = "https://files.pythonhosted.org/packages/d6/d4/dd813703af8a1e2ac33bf3feb27e8a5ad514c9f219df80c64d69807e7f71/ruff-0.11.2-py3-none-win_arm64.whl", hash = "sha256:52933095158ff328f4c77af3d74f0379e34fd52f175144cefc1b192e7ccd32b4", size = 10441990 },
-]
-
-[[package]]
-name = "tabulate"
-version = "0.9.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/ec/fe/802052aecb21e3797b8f7902564ab6ea0d60ff8ca23952079064155d1ae1/tabulate-0.9.0.tar.gz", hash = "sha256:0095b12bf5966de529c0feb1fa08671671b3368eec77d7ef7ab114be2c068b3c", size = 81090 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/40/44/4a5f08c96eb108af5cb50b41f76142f0afa346dfa99d5296fe7202a11854/tabulate-0.9.0-py3-none-any.whl", hash = "sha256:024ca478df22e9340661486f85298cff5f6dcdba14f3813e8830015b9ed1948f", size = 35252 },
 ]
 
 [[package]]
