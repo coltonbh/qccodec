@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.7.8] - 2025-07-07
+
 ### Fixed
 
 - `crest` parsers imported missing `qcio.constants` module. Updated to `qcconst.constants`.
@@ -217,7 +219,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Can return either `AtomicResult` or `FailedOperation` objects depending on whether calculation succeeded or failed.
 - Tests for all parsers and the main `parse` function.
 
-[unreleased]: https://github.com/coltonbh/qccodec/compare/0.7.7...HEAD
+[unreleased]: https://github.com/coltonbh/qccodec/compare/0.7.8...HEAD
+[0.7.8]: https://github.com/coltonbh/qccodec/releases/tag/0.7.8
 [0.7.7]: https://github.com/coltonbh/qccodec/releases/tag/0.7.7
 [0.7.6]: https://github.com/coltonbh/qccodec/releases/tag/0.7.6
 [0.7.5]: https://github.com/coltonbh/qccodec/releases/tag/0.7.5
