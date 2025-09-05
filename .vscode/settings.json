@@ -45,5 +45,6 @@
         "traj",
         "wavenumber",
         "wavenumbers"
-    ]
+    ],
+    "autoDocstring.docstringFormat": "google-notypes"
 }
