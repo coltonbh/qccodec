@@ -83,3 +83,6 @@ warn_untyped_fields = true
 
 [tool.typos]
 files.extend-exclude = ["tests/data/**"]
+
+[tool.typos.default.extend-words]
+runtyp = "runtyp"

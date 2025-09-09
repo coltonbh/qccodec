@@ -74,7 +74,7 @@ def encode(inp_obj: ProgramInput) -> NativeInput:
             raise EncoderError(msg)
 
         inp_lines.append(f"%{method_key}")
-        # Set the CalcType via the 'RunTyp' keyword, if needed
+        # Set the CalcType via the 'runtyp' keyword, if needed
         runtype_key = caseless_keyword_lookup(method_keywords, "runtyp")
         if runtype is not None:
             if runtype_key in method_keywords:
