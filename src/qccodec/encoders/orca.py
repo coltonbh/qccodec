@@ -1,4 +1,5 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping
+from typing import Any
 
 from qcio import CalcType, ProgramInput
 
@@ -26,8 +27,8 @@ def encode(inp_obj: ProgramInput) -> NativeInput:
         NativeInput with .input being an orca.inp file and .geometry an xyz file.
     """
     # Set calctype, either directly or (if necessary) via the %method block
-    runtype = None
     calctype = None
+    method_block_calctype = None
     if inp_obj.calctype.value == CalcType.hessian:
         calctype = "freq"
     elif inp_obj.calctype.value == CalcType.optimization:
@@ -35,63 +36,75 @@ def encode(inp_obj: ProgramInput) -> NativeInput:
     elif inp_obj.calctype.value == CalcType.transition_state:
         calctype = "optts"
     else:
-        runtype = inp_obj.calctype.value
+        method_block_calctype = inp_obj.calctype.value
 
     # Collect lines for input file
     inp_lines = []
 
-    # Global variables
-    global_variables = inp_obj.keywords.get("%", [])
-    if not isinstance(global_variables, Sequence):
-        msg = f"Expected a sequence for '%' global variables, but got {type(global_variables)}:\n{global_variables}"
-        raise EncoderError(msg)
-
-    for global_variable in global_variables:
-        inp_lines.append(f"% {global_variable}")
+    # maxcore
+    maxcore_key = caseless_keyword_lookup(inp_obj.keywords, "maxcore")
+    if maxcore_key in inp_obj.keywords:
+        inp_lines.append(f"%maxcore {inp_obj.keywords[maxcore_key]}")
 
     # Model
-    inp_lines.append(f"! {inp_obj.model.method} {inp_obj.model.basis}")
+    inp_lines.append(f"! {inp_obj.model.method}")
 
-    # Global keywords
-    global_keywords = inp_obj.keywords.get("!", [])
-    if not isinstance(global_keywords, Sequence):
-        msg = f"Expected a sequence for '!' global keywords, but got {type(global_keywords)}:\n{global_keywords}"
-        raise EncoderError(msg)
-
-    for global_keyword in global_keywords:
-        inp_lines.append(f"! {global_keyword}")
-
-    # CalcType, if it needs to be set as a global keyword
+    # CalcType
+    #   - If it needs to be set as a global keyword...
     if calctype is not None:
         inp_lines.append(f"! {calctype}")
 
-    # Method block, with CalcType if it needs to be set here
+    #   - If it needs to be set via the "method" block...
     method_key = caseless_keyword_lookup(inp_obj.keywords, "method")
-    if runtype is not None or method_key in inp_obj.keywords:
-        method_keywords = inp_obj.keywords.get(method_key, {})
-        if not isinstance(method_keywords, Mapping):
-            msg = f"Expected a mapping for 'method' block keywords, but got {type(method_keywords)}:\n{method_keywords}"
+    if method_block_calctype is not None or method_key in inp_obj.keywords:
+        inp_lines.append(f"%{method_key}")
+
+        # If CalcType needs to be set in the method block, do so...
+        block_keywords = inp_obj.keywords.get(method_key, {})
+        if method_block_calctype is not None:
+            inp_lines.append(f"    {'runtyp':<{PADDING}} {method_block_calctype}")
+
+        if not isinstance(block_keywords, dict):
+            msg = f"Expected a mapping for '{method_key}' block keywords, but got {type(block_keywords)}:\n{block_keywords}"
             raise EncoderError(msg)
 
-        inp_lines.append(f"%{method_key}")
-        # Set the CalcType via the 'runtyp' keyword, if needed
-        runtype_key = caseless_keyword_lookup(method_keywords, "runtyp")
-        if runtype is not None:
-            if runtype_key in method_keywords:
-                msg = (
-                    f"Keyword '{runtype_key}' should not be set as a method block "
-                    f"keyword. It should be set at '.calctype'."
-                )
-                raise EncoderError(msg)
-            inp_lines.append(f"    {runtype_key:<{PADDING}} {runtype}")
-        # Set other method block keywords, if any
-        for method_keyword, method_keyval in dict(method_keywords).items():
-            inp_lines.append(f"    {method_keyword:<{PADDING}} {method_keyval}")
+        # Make sure the 'runtyp' keyword is not being used
+        runtyp_key = caseless_keyword_lookup(block_keywords, "runtyp")
+        if runtyp_key in block_keywords:
+            msg = f"Cannot use '{runtyp_key}' keyword. Calculation types must be set at '.calctype'."
+            raise EncoderError(msg)
+
+        # Set other method block keywords
+        for block_keyword, block_keyval in dict(block_keywords).items():
+            inp_lines.append(f"    {block_keyword:<{PADDING}} {block_keyval}")
         inp_lines.append("end")
 
-    # Other blocks
+    # Basis
+    basis_key = caseless_keyword_lookup(inp_obj.keywords, "basis")
+    if inp_obj.model.basis is not None or basis_key in inp_obj.keywords:
+        inp_lines.append(f"%{basis_key}")
+        if inp_obj.model.basis is not None:
+            inp_lines.append(f'    {"basis":<{PADDING}} "{inp_obj.model.basis}"')
+
+        block_keywords = inp_obj.keywords.get(basis_key, {})
+        if not isinstance(block_keywords, Mapping):
+            msg = f"Expected a mapping for '{basis_key}' block keywords, but got {type(block_keywords)}:\n{block_keywords}"
+            raise EncoderError(msg)
+
+        for block_keyword, block_keyval in dict(block_keywords).items():
+            # Add necessary quotes to basis set definitions
+            if isinstance(block_keyval, str) and not block_keyval.casefold() in {
+                "true".casefold(),
+                "false".casefold(),
+            }:
+                block_keyval = f'"{block_keyval}"'
+
+            inp_lines.append(f"    {block_keyword:<{PADDING}} {block_keyval}")
+        inp_lines.append("end")
+
+    # Blocks
     for key in inp_obj.keywords:
-        if key not in {"!", "%", "method"}:
+        if key.casefold() not in {"maxcore".casefold(), "basis".casefold()}:
             block_keywords = inp_obj.keywords.get(key)
             if not isinstance(block_keywords, Mapping):
                 msg = f"Expected a mapping for '{key}' block keywords, but got {type(block_keywords)}:\n{block_keywords}"
@@ -114,16 +127,9 @@ def encode(inp_obj: ProgramInput) -> NativeInput:
 
 
 # Helpers
-def caseless_keyword_lookup(keywords: Mapping, key: str) -> str:
+def caseless_keyword_lookup(keywords: dict[str, Any], key: str) -> str:
     """Find a caseless keyword in a mapping.
 
     If present, returns the keyword in the mapping. Otherwise, returns the input keyword.
     """
-    return next((k for k in keywords if are_equal_caseless_strings(k, key)), key)
-
-
-def are_equal_caseless_strings(obj1: object, obj2: object) -> bool:
-    """Check if two objects are strings that are caselessly equal."""
-    if isinstance(obj1, str) and isinstance(obj2, str):
-        return obj1.casefold() == obj2.casefold()
-    return False
+    return next((k for k in keywords if k.casefold() == key.casefold()), key)
