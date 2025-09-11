@@ -11,9 +11,17 @@ from qccodec.exceptions import EncoderError
     [
         (CalcType.energy, {}),
         (CalcType.gradient, {}),
+        (CalcType.gradient, {"numgrad": True}),
+        (CalcType.gradient, {"numgrad": {"accuracy": 6, "dx": 0.002}}),
         (CalcType.hessian, {"freq": {"numfreq": True}}),
+        (CalcType.hessian, {"freq": {"numfreq": True}, "numgrad": True}),
         (CalcType.optimization, {"geom": {"maxiter": 30}}),
+        (CalcType.optimization, {"geom": {"maxiter": 30}, "numgrad": True}),
         (CalcType.transition_state, {"geom": {"calc_hess": True, "numhess": True}}),
+        (
+            CalcType.transition_state,
+            {"geom": {"calc_hess": True, "numhess": True}, "numgrad": True},
+        ),
     ],
 )
 def test_write_input_files(calctype: CalcType, extra_keywords: dict[str, object]):

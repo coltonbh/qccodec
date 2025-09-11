@@ -26,17 +26,27 @@ def encode(inp_obj: ProgramInput) -> NativeInput:
     Returns:
         NativeInput with .input being an orca.inp file and .geometry an xyz file.
     """
+    # NumGrad
+    numgrad_key = caseless_keyword_lookup(inp_obj.keywords, "numgrad")
+    numgrad_val = inp_obj.keywords.get(numgrad_key)
+    needs_numgrad = numgrad_key in inp_obj.keywords and isinstance(numgrad_val, Mapping) or bool(numgrad_val)
+
     # Set calctype, either directly or (if necessary) via the %method block
     calctype = None
     method_block_calctype = None
-    if inp_obj.calctype.value == CalcType.hessian:
-        calctype = "freq"
+    if inp_obj.calctype.value == CalcType.energy:
+        method_block_calctype = "energy"
+    elif inp_obj.calctype.value == CalcType.gradient:
+        method_block_calctype = "numgrad" if needs_numgrad else "gradient"
+    elif inp_obj.calctype.value == CalcType.hessian:
+        calctype = f"freq {numgrad_key}" if needs_numgrad else "freq"
     elif inp_obj.calctype.value == CalcType.optimization:
-        calctype = "opt"
+        calctype = f"opt {numgrad_key}" if needs_numgrad else "opt"
     elif inp_obj.calctype.value == CalcType.transition_state:
-        calctype = "optts"
+        calctype = f"optts {numgrad_key}" if needs_numgrad else "optts"
     else:
-        method_block_calctype = inp_obj.calctype.value
+        msg = f"Calculation type {inp_obj.calctype.value} is not yet implemented."
+        raise NotImplementedError(msg)
 
     # Collect lines for input file
     inp_lines = []
@@ -102,10 +112,18 @@ def encode(inp_obj: ProgramInput) -> NativeInput:
             inp_lines.append(f"    {block_keyword:<{PADDING}} {block_keyval}")
         inp_lines.append("end")
 
+    # NumGrad
+    if needs_numgrad and isinstance(numgrad_val, Mapping):
+        inp_lines.append(f"%{numgrad_key}")
+        for block_keyword, block_keyval in dict(numgrad_val).items():
+            inp_lines.append(f"    {block_keyword:<{PADDING}} {block_keyval}")
+        inp_lines.append("end")
+
     # Blocks
     for key in inp_obj.keywords:
-        if key.casefold() not in {"maxcore".casefold(), "basis".casefold()}:
+        if key.casefold() not in {"maxcore".casefold(), "basis".casefold(), "numgrad".casefold()}:
             block_keywords = inp_obj.keywords.get(key)
+
             if not isinstance(block_keywords, Mapping):
                 msg = f"Expected a mapping for '{key}' block keywords, but got {type(block_keywords)}:\n{block_keywords}"
                 raise EncoderError(msg)
