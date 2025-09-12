@@ -14,140 +14,122 @@ SUPPORTED_CALCTYPES = {
     CalcType.transition_state,
 }
 XYZ_FILENAME = "geometry.xyz"
-PADDING = 20  # padding between keyword and value in tc.in
+PADDING = 20  # padding between keyword and value
+
+
+def _validate_keywords(keywords: dict[str, Any]) -> None:
+    """Validate keywords for ORCA encoder. Expecting all lowercase keys."""
+
+    _NON_BLOCKS = {  # disallowed top-level blocks → where to set instead
+        "coords": ".structure",
+    }
+
+    _NON_BLOCK_KEYWORDS = {  # disallowed keys inside allowed blocks → where to set instead
+        "method": {"method": ".model.method", "runtyp": ".calctype"},
+        "basis": {"basis": ".model.basis"},
+    }
+
+    # 1) Blocks that should not appear as top-level keywords
+    for block, where in _NON_BLOCKS.items():
+        if block in keywords:
+            raise EncoderError(
+                f"Block '{keywords[block]}' should not be set as a keyword. "
+                f"Set its data on '{where}'."
+            )
+
+    # 2) Disallowed keys inside allowed blocks
+    for block, disallowed in _NON_BLOCK_KEYWORDS.items():
+        for variable, where in disallowed.items():
+            if keywords.get(block, {}).get(variable) is not None:
+                raise EncoderError(
+                    f"Keyword '{variable}' in block '{block}' should not be set directly. It "
+                    f"should be set at '{where}'",
+                )
+
+
+def _fmt(key: str, value: Any) -> Any:
+    """Format a value for ORCA input."""
+    keywords_needing_quotes = {"auxc", "auxj", "auxjk"}
+    if key.casefold() in keywords_needing_quotes:
+        return f'"{value}"'  # ORCA needs quotes for certain keywords
+    if isinstance(value, bool):
+        return str(value).lower()  # ORCA expects 'true'/'false' for booleans
+    return value
 
 
 def encode(inp_obj: ProgramInput) -> NativeInput:
-    """Translate a ProgramInput into Orca input files.
+    """Translate a ProgramInput into ORCA input files.
 
     Args:
         inp_obj: The qcio ProgramInput object for a computation.
 
     Returns:
         NativeInput with .input being an orca.inp file and .geometry an xyz file.
-    """
-    # NumGrad
-    numgrad_key = caseless_keyword_lookup(inp_obj.keywords, "numgrad")
-    numgrad_val = inp_obj.keywords.get(numgrad_key)
-    needs_numgrad = numgrad_key in inp_obj.keywords and isinstance(numgrad_val, Mapping) or bool(numgrad_val)
 
-    # Set calctype, either directly or (if necessary) via the %method block
-    calctype = None
-    method_block_calctype = None
-    if inp_obj.calctype.value == CalcType.energy:
-        method_block_calctype = "energy"
-    elif inp_obj.calctype.value == CalcType.gradient:
-        method_block_calctype = "numgrad" if needs_numgrad else "gradient"
-    elif inp_obj.calctype.value == CalcType.hessian:
-        calctype = f"freq {numgrad_key}" if needs_numgrad else "freq"
-    elif inp_obj.calctype.value == CalcType.optimization:
-        calctype = f"opt {numgrad_key}" if needs_numgrad else "opt"
-    elif inp_obj.calctype.value == CalcType.transition_state:
-        calctype = f"optts {numgrad_key}" if needs_numgrad else "optts"
-    else:
-        msg = f"Calculation type {inp_obj.calctype.value} is not yet implemented."
-        raise NotImplementedError(msg)
+    Notes:
+        - ORCA keywords are case-insensitive. This encoder will preserve the
+            casing of keywords as provided in inp_obj.keywords.
+        - ORCA requires passing `numgrad` for numerical gradients. To activate a
+            numerical gradient for a single point or optimization pass
+            `{"numgrad": "true"} in the keywords or `{"numgrad": {...}}` with a
+            dictionary of numgrad block keywords. An empty dictionary will also work
+            (equivalent to `{"numgrad": "true"}`).
+    """
+
+    # Handle ORCA's case-insensitive keywords by doing caseless lookups
+    kw_lower = {k.casefold(): v for k, v in inp_obj.keywords.items()}
+    _validate_keywords(kw_lower)
 
     # Collect lines for input file
     inp_lines = []
 
     # maxcore
-    maxcore_key = caseless_keyword_lookup(inp_obj.keywords, "maxcore")
-    if maxcore_key in inp_obj.keywords:
-        inp_lines.append(f"%maxcore {inp_obj.keywords[maxcore_key]}")
+    if "maxcore" in kw_lower:
+        inp_lines.append(f"%maxcore {kw_lower['maxcore']}\n")
 
-    # Model
-    inp_lines.append(f"! {inp_obj.model.method}")
+    # Method and Basis
+    inp_lines.append(f"! {inp_obj.model.method} {inp_obj.model.basis}")
 
-    # CalcType
-    #   - If it needs to be set as a global keyword...
-    if calctype is not None:
-        inp_lines.append(f"! {calctype}")
+    # NumGrad. May be used for gradients or optimizations
+    if "numgrad" in kw_lower:
+        inp_lines.append(f"! numgrad")
 
-    #   - If it needs to be set via the "method" block...
-    method_key = caseless_keyword_lookup(inp_obj.keywords, "method")
-    if method_block_calctype is not None or method_key in inp_obj.keywords:
-        inp_lines.append(f"%{method_key}")
+    # Set ORCA runtyp based on calctype
+    if inp_obj.calctype == CalcType.energy:
+        runtyp = "energy"
+    elif inp_obj.calctype == CalcType.gradient:
+        runtyp = "engrad"
+    elif inp_obj.calctype == CalcType.hessian:
+        if "numfreq" in kw_lower:
+            runtyp = "numfreq"
+        else:
+            runtyp = "freq"
+    elif inp_obj.calctype == CalcType.optimization:
+        runtyp = "opt"
+    elif inp_obj.calctype == CalcType.transition_state:
+        runtyp = "optts"
 
-        # If CalcType needs to be set in the method block, do so...
-        block_keywords = inp_obj.keywords.get(method_key, {})
-        if method_block_calctype is not None:
-            inp_lines.append(f"    {'runtyp':<{PADDING}} {method_block_calctype}")
+    inp_lines.append(f"! {runtyp}\n")
 
-        if not isinstance(block_keywords, dict):
-            msg = f"Expected a mapping for '{method_key}' block keywords, but got {type(block_keywords)}:\n{block_keywords}"
-            raise EncoderError(msg)
-
-        # Make sure the 'runtyp' keyword is not being used
-        runtyp_key = caseless_keyword_lookup(block_keywords, "runtyp")
-        if runtyp_key in block_keywords:
-            msg = f"Cannot use '{runtyp_key}' keyword. Calculation types must be set at '.calctype'."
-            raise EncoderError(msg)
-
-        # Set other method block keywords
-        for block_keyword, block_keyval in dict(block_keywords).items():
-            inp_lines.append(f"    {block_keyword:<{PADDING}} {block_keyval}")
-        inp_lines.append("end")
-
-    # Basis
-    basis_key = caseless_keyword_lookup(inp_obj.keywords, "basis")
-    if inp_obj.model.basis is not None or basis_key in inp_obj.keywords:
-        inp_lines.append(f"%{basis_key}")
-        if inp_obj.model.basis is not None:
-            inp_lines.append(f'    {"basis":<{PADDING}} "{inp_obj.model.basis}"')
-
-        block_keywords = inp_obj.keywords.get(basis_key, {})
-        if not isinstance(block_keywords, Mapping):
-            msg = f"Expected a mapping for '{basis_key}' block keywords, but got {type(block_keywords)}:\n{block_keywords}"
-            raise EncoderError(msg)
-
-        for block_keyword, block_keyval in dict(block_keywords).items():
-            # Add necessary quotes to basis set definitions
-            if isinstance(block_keyval, str) and not block_keyval.casefold() in {
-                "true".casefold(),
-                "false".casefold(),
-            }:
-                block_keyval = f'"{block_keyval}"'
-
-            inp_lines.append(f"    {block_keyword:<{PADDING}} {block_keyval}")
-        inp_lines.append("end")
-
-    # NumGrad
-    if needs_numgrad and isinstance(numgrad_val, Mapping):
-        inp_lines.append(f"%{numgrad_key}")
-        for block_keyword, block_keyval in dict(numgrad_val).items():
-            inp_lines.append(f"    {block_keyword:<{PADDING}} {block_keyval}")
-        inp_lines.append("end")
-
-    # Blocks
-    for key in inp_obj.keywords:
-        if key.casefold() not in {"maxcore".casefold(), "basis".casefold(), "numgrad".casefold()}:
-            block_keywords = inp_obj.keywords.get(key)
-
-            if not isinstance(block_keywords, Mapping):
-                msg = f"Expected a mapping for '{key}' block keywords, but got {type(block_keywords)}:\n{block_keywords}"
-                raise EncoderError(msg)
-
-            inp_lines.append(f"%{key}")
-            for block_keyword, block_keyval in dict(block_keywords).items():
-                inp_lines.append(f"    {block_keyword:<{PADDING}} {block_keyval}")
+    # Input Blocks
+    for block, kwargs in kw_lower.items():
+        if isinstance(kwargs, Mapping):  # Skip non-block keywords
+            inp_lines.append(f"%{block}")
+            for key, value in kwargs.items():
+                inp_lines.append(f"    {key:<{PADDING}} {_fmt(key, value)}")
             inp_lines.append("end")
 
+    # Write a new line if there were any blocks
+    if any(isinstance(v, Mapping) for v in kw_lower.values()):
+        inp_lines.append("")
+
     # Structure
-    charge = inp_obj.structure.charge
-    multiplicity = inp_obj.structure.multiplicity
-    inp_lines.append(f"* xyzfile {charge} {multiplicity} {XYZ_FILENAME}")
+    inp_lines.append(
+        f"* xyzfile {inp_obj.structure.charge} {inp_obj.structure.multiplicity} {XYZ_FILENAME}"
+    )
+
     return NativeInput(
         input_file="\n".join(inp_lines) + "\n",
         geometry_file=inp_obj.structure.to_xyz(),
         geometry_filename=XYZ_FILENAME,
     )
-
-
-# Helpers
-def caseless_keyword_lookup(keywords: dict[str, Any], key: str) -> str:
-    """Find a caseless keyword in a mapping.
-
-    If present, returns the keyword in the mapping. Otherwise, returns the input keyword.
-    """
-    return next((k for k in keywords if k.casefold() == key.casefold()), key)

@@ -2,7 +2,7 @@ import pytest
 from qcio import CalcType, Model, ProgramInput
 from qcio.utils import water
 
-from qccodec.encoders.orca import encode
+from qccodec.encoders.orca import _validate_keywords, encode
 from qccodec.exceptions import EncoderError
 
 
@@ -59,3 +59,32 @@ def test_encode_raises_error_conflicting_runtyp_keyword():
     )
     with pytest.raises(EncoderError):
         encode(inp_obj)
+
+
+def test_validate_keywords_raises_error_if_coords_block_in_keywords():
+    """The 'coords' block should not be set directly as a keyword."""
+
+    keywords = {"coords": {"units": "angstrom"}}
+    with pytest.raises(EncoderError):
+        _validate_keywords(keywords)
+
+
+def test_validate_keywords_raises_error_if_method_block_contains_method_keyword():
+    """The 'method' keyword should not be set inside the 'method' block."""
+    keywords = {"method": {"method": "b3lyp"}}
+    with pytest.raises(EncoderError):
+        _validate_keywords(keywords)
+
+
+def test_validate_keywords_raises_error_if_method_block_contains_runtyp_keyword():
+    """The 'runtyp' keyword should not be set inside the 'method' block."""
+    keywords = {"method": {"runtyp": "sp"}}
+    with pytest.raises(EncoderError):
+        _validate_keywords(keywords)
+
+
+def test_validate_keywords_raises_error_if_basis_block_contains_basis_keyword():
+    """The 'basis' keyword should not be set inside the 'basis' block."""
+    keywords = {"basis": {"basis": "def2-svp"}}
+    with pytest.raises(EncoderError):
+        _validate_keywords(keywords)
