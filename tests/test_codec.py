@@ -20,6 +20,7 @@ def test_encode_raises_error_with_invalid_calctype(prog_inp):
 
 def test_main_terachem_encoder(prog_inp):
     prog_inp = prog_inp("energy")
+    prog_inp.keywords.update({"purify": "no", "some-bool": False})
     native_input = encode(prog_inp, "terachem")
     correct_tcin = (
         f"{'run':<{terachem.PADDING}} {prog_inp.calctype.value}\n"
