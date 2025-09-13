@@ -7,6 +7,7 @@ from qccodec.exceptions import EncoderError
 def test_write_input_files(prog_inp):
     """Test write_input_files method."""
     prog_inp = prog_inp("energy")
+    prog_inp.keywords.update({"purify": "no", "some-bool": False})
 
     native_input = encode(prog_inp)
     # Testing that we capture:
@@ -33,6 +34,7 @@ def test_write_input_files_renames_hessian_to_frequencies(prog_inp):
     """Test write_input_files method for hessian."""
     # Modify input to be a hessian calculation
     prog_inp = prog_inp("hessian")
+    prog_inp.keywords.update({"purify": "no", "some-bool": False})
     native_input = encode(prog_inp)
 
     assert native_input.input_file == (

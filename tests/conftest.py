@@ -54,13 +54,8 @@ def prog_inp():
         return ProgramInput(
             structure=water,
             calctype=calctype,
-            # Integration tests depend up this model; do not change
+            # Tests depend up this model; do not change
             model={"method": "hf", "basis": "sto-3g"},
-            # Tests depend upon these keywords; do not change
-            keywords={
-                "purify": "no",
-                "some-bool": False,
-            },
         )
 
     return create_prog_input

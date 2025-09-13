@@ -1,10 +1,6 @@
 [
   {
     "input_data": {
-      "keywords": {
-        "purify": "no",
-        "some-bool": false
-      },
       "structure": {
         "extras": {
           "xyz_comments": [
@@ -183,10 +179,6 @@
   },
   {
     "input_data": {
-      "keywords": {
-        "purify": "no",
-        "some-bool": false
-      },
       "structure": {
         "extras": {
           "xyz_comments": [

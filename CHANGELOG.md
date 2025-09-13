@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Changed
+
+- Changed TeraChem encoder `Enum` lookups to compare `Enums` directly instead of string value.
+- Updated `prog_inp` pytest fixture to have no keywords so that it can be reused in other outside of TeraChem.
+
 ## [0.7.8] - 2025-07-07
 
 ### Fixed
