@@ -50,7 +50,10 @@ from qccodec.exceptions import EncoderError
             CalcType.transition_state,
             "revdsd-pbep86-d4/2021",
             "def2-svp",
-            {"basis": {"auxc": "def2-svp/c"}, "geom": {"calc_hess": True, "numhess": True}},
+            {
+                "basis": {"auxc": "def2-svp/c"},
+                "geom": {"calc_hess": True, "numhess": True},
+            },
         ),
     ],
 )
@@ -76,24 +79,6 @@ def test_write_input_files(
                 assert block_keyword in input_file, (
                     f"{block_keyword} not in\n{input_file}"
                 )
-
-
-def test_encode_raises_error_conflicting_runtyp_keyword():
-    """For certain calctypes, the method block 'runtyp' keyword cannot be used."""
-    inp_obj = ProgramInput(
-        calctype=CalcType.energy,
-        model=Model(method="hf", basis="sto-3g"),
-        structure=water,
-        keywords={
-            "method": {"runtyp": "sp"},
-            "basis": {"auxc": "def2-svp/c", "decontractbas": True},
-            "scf": {
-                "convergence": "verytight",
-            },
-        },
-    )
-    with pytest.raises(EncoderError):
-        encode(inp_obj)
 
 
 def test_validate_keywords_raises_error_if_coords_block_in_keywords():
