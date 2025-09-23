@@ -85,7 +85,15 @@ def encode(inp_obj: ProgramInput) -> NativeInput:
 
     # maxcore
     if "maxcore" in kw_lower:
-        inp_lines.append(f"%maxcore {kw_lower['maxcore']}\n")
+        inp_lines.append(f"%maxcore {kw_lower['maxcore']}")
+
+    # pal
+    if "pal" in kw_lower:
+        inp_lines.append(f"%pal nprocs {kw_lower['pal']} end")
+
+    # Add an empty line if writing maxcore/pal
+    if inp_lines:
+        inp_lines.append("")
 
     # Method and Basis
     inp_lines.append(f"! {inp_obj.model.method} {inp_obj.model.basis}")
