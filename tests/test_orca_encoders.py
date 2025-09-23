@@ -7,40 +7,75 @@ from qccodec.exceptions import EncoderError
 
 
 @pytest.mark.parametrize(
-    "calctype, extra_keywords",
+    "calctype, method, basis, keywords",
     [
-        (CalcType.energy, {}),
-        (CalcType.gradient, {}),
-        (CalcType.gradient, {"numgrad": True}),
-        (CalcType.gradient, {"numgrad": {"accuracy": 6, "dx": 0.002}}),
-        (CalcType.hessian, {"freq": {"numfreq": True}}),
-        (CalcType.hessian, {"freq": {"numfreq": True}, "numgrad": True}),
-        (CalcType.optimization, {"geom": {"maxiter": 30}}),
-        (CalcType.optimization, {"geom": {"maxiter": 30}, "numgrad": True}),
-        (CalcType.transition_state, {"geom": {"calc_hess": True, "numhess": True}}),
+        (CalcType.energy, "b3lyp", "def2-svp", {}),
+        (CalcType.energy, "b3lyp", "def2-svp", {"maxcore": 500, "pal": 4}),
+        (CalcType.energy, "b3lyp", "def2-svp", {"scf": {"convergence": "verytight"}}),
+        (
+            CalcType.energy,
+            "revdsd-pbep86-d4/2021",
+            "def2-svp",
+            {"basis": {"auxc": "def2-svp/c"}},
+        ),
+        (CalcType.gradient, "b3lyp", "def2-svp", {}),
+        (
+            CalcType.gradient,
+            "revdsd-pbep86-d4/2021",
+            "def2-svp",
+            {"basis": {"auxc": "def2-svp/c"}, "numgrad": True},
+        ),
+        (
+            CalcType.gradient,
+            "revdsd-pbep86-d4/2021",
+            "def2-svp",
+            {"basis": {"auxc": "def2-svp/c"}, "numgrad": {"accuracy": 6, "dx": 0.002}},
+        ),
+        (CalcType.hessian, "b3lyp", "def2-svp", {}),
+        (
+            CalcType.hessian,
+            "revdsd-pbep86-d4/2021",
+            "def2-svp",
+            {"basis": {"auxc": "def2-svp/c"}, "freq": {"numfreq": True}},
+        ),
+        (CalcType.optimization, "b3lyp", "def2-svp", {"geom": {"maxiter": 30}}),
+        (
+            CalcType.optimization,
+            "b3lyp",
+            "def2-svp",
+            {"geom": {"maxiter": 30}, "numgrad": True},
+        ),
+        (CalcType.transition_state, "b3lyp", "def2-svp", {"geom": {"calc_hess": True}}),
         (
             CalcType.transition_state,
-            {"geom": {"calc_hess": True, "numhess": True}, "numgrad": True},
+            "revdsd-pbep86-d4/2021",
+            "def2-svp",
+            {"basis": {"auxc": "def2-svp/c"}, "geom": {"calc_hess": True, "numhess": True}},
         ),
     ],
 )
-def test_write_input_files(calctype: CalcType, extra_keywords: dict[str, object]):
+def test_write_input_files(
+    calctype: CalcType, method: str, basis: str, keywords: dict[str, object]
+):
     """Test write_input_files method."""
     inp_obj = ProgramInput(
         calctype=calctype,
-        model=Model(method="revdsd-pbep86-d4/2021", basis="def2-svp"),
+        model=Model(method=method, basis=basis),
         structure=water,
-        keywords={
-            "maxcore": 500,
-            "basis": {"auxc": "def2-svp/c", "decontractbas": True},
-            "scf": {
-                "convergence": "verytight",
-            },
-            **extra_keywords,
-        },
+        keywords=keywords,
     )
     native_input = encode(inp_obj)
-    print(native_input.input_file)
+    input_file = native_input.input_file
+
+    # Check that all defined main / block keywords ended up in the file
+    for keyword, value in keywords.items():
+        assert keyword in input_file, f"{keyword} not in\n{input_file}"
+
+        if isinstance(value, dict):
+            for block_keyword in value:
+                assert block_keyword in input_file, (
+                    f"{block_keyword} not in\n{input_file}"
+                )
 
 
 def test_encode_raises_error_conflicting_runtyp_keyword():
