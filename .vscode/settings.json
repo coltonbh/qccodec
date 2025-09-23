@@ -5,6 +5,7 @@
         "calcinfo",
         "calctype",
         "calctypes",
+        "caseless",
         "crestopt",
         "CUDA",
         "dataclasses",
@@ -13,12 +14,14 @@
         "freqs",
         "Hartree",
         "htmlcov",
+        "maxcore",
         "maxiter",
         "natom",
         "natoms",
         "ndarray",
         "nmodes",
         "nocuda",
+        "numgrad",
         "numhess",
         "optim",
         "OPTLOG",
@@ -30,6 +33,7 @@
         "qcio",
         "rotamer",
         "rotamers",
+        "runtyp",
         "runtypes",
         "singlepoint",
         "spinmult",
@@ -45,5 +49,6 @@
         "traj",
         "wavenumber",
         "wavenumbers"
-    ]
+    ],
+    "autoDocstring.docstringFormat": "google-notypes"
 }
