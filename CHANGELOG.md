@@ -8,13 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Removed
 
-- 🚨Python 3.9 support. Minimum supported version is now 3.10.
+- 🚨Python 3.9 support. Minimum supported version is now 3.10. [#37](https://github.com/coltonbh/qccodec/pull/37).
 
 ### Changed
 
-- Updated to `qcio>=0.15.0` which incorporates new `qcio` nomenclature.
+- Updated to `qcio>=0.15.0` which incorporates new `qcio` nomenclature. [#37](https://github.com/coltonbh/qccodec/pull/37)
 - Changed TeraChem encoder `Enum` lookups to compare `Enums` directly instead of string value.
 - Updated `prog_inp` pytest fixture to have no keywords so that it can be reused in other outside of TeraChem.
+
+### Added
+
+- Test matrix that runs off a "pip" installed version of `qccodec`.
 
 ## [0.7.8] - 2025-07-07
 
