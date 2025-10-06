@@ -6,7 +6,7 @@
 
 ## UPDATED DESIGN DECISION:
 
-- I don't see a strong reason for making this package a standalone package that parses everything required for a `ProgramOutput` object including input data, provenance data, xyz files, etc... While the original idea was to have a cli tool to run on TeraChem files, now that I've build my own data structures (`qcio`) and driver program (`qcop`), there's no reason to parse anything but `SinglePointResults` values because we should just be driving the programs with `qcop` and already have access to the input data. The code is far easier to maintain as only a results parser. The only downside would be walking in to someone else's old data and wanting to slurp it all in, but perhaps there's no reason to build for that use case now... Just go with SIMPLE and keep the code maintainable.
+- I don't see a strong reason for making this package a standalone package that parses everything required for a `Results` object including input data, provenance data, xyz files, etc... While the original idea was to have a cli tool to run on TeraChem files, now that I've build my own data structures (`qcio`) and driver program (`qcop`), there's no reason to parse anything but `SinglePointData` values because we should just be driving the programs with `qcop` and already have access to the input data. The code is far easier to maintain as only a results parser. The only downside would be walking in to someone else's old data and wanting to slurp it all in, but perhaps there's no reason to build for that use case now... Just go with SIMPLE and keep the code maintainable.
 
 ## Future Features
 

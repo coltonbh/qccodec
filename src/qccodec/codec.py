@@ -3,16 +3,16 @@
 import logging
 from importlib import import_module
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any
 
 from qcio import (
+    CalcSpec,
     CalcType,
-    ConformerSearchResults,
-    OptimizationResults,
-    ProgramInput,
-    SinglePointResults,
-    StructuredInputs,
-    StructuredResults,
+    ConformerSearchData,
+    OptimizationData,
+    SinglePointData,
+    StructuredData,
+    StructuredSpecs,
 )
 
 from .exceptions import DecoderError, EncoderError, MatchNotFoundError
@@ -29,12 +29,12 @@ logger = logging.getLogger(__name__)
 
 
 RESULTS_TYPE_MAP = {
-    CalcType.energy: SinglePointResults,
-    CalcType.gradient: SinglePointResults,
-    CalcType.hessian: SinglePointResults,
-    CalcType.optimization: OptimizationResults,
-    CalcType.transition_state: OptimizationResults,
-    CalcType.conformer_search: ConformerSearchResults,
+    CalcType.energy: SinglePointData,
+    CalcType.gradient: SinglePointData,
+    CalcType.hessian: SinglePointData,
+    CalcType.optimization: OptimizationData,
+    CalcType.transition_state: OptimizationData,
+    CalcType.conformer_search: ConformerSearchData,
 }
 
 
@@ -42,11 +42,11 @@ def decode(
     program: str,
     calctype: CalcType,
     *,
-    stdout: Optional[str] = None,
-    directory: Optional[Union[str, Path]] = None,
-    input_data: Optional[StructuredInputs] = None,
+    stdout: str | None = None,
+    directory: str | Path | None = None,
+    input_data: StructuredSpecs | None = None,
     as_dict: bool = False,
-) -> Union[StructuredResults, dict[str, Any]]:
+) -> StructuredData | dict[str, Any]:
     """Decode the output of a quantum chemistry program into a standardized output.
     
     Args:
@@ -57,11 +57,11 @@ def decode(
         input_data: The input data used for the calculation.
             This is used to provide additional context for the parsers.
         as_dict: If True, return the results as a dictionary instead of a 
-            StructuredResults object. Used mostly for testing purposes to enable 
-            returning parsed data that isn't a fully valid StructuredResults object.
+            StructuredData object. Used mostly for testing purposes to enable 
+            returning parsed data that isn't a fully valid StructuredData object.
 
     Returns:
-        A StructuredResults object containing the parsed data.
+        A StructuredData object containing the parsed data.
 
     Raises:
         DecoderError: If neither stdout nor directory is provided or if the program
@@ -120,16 +120,16 @@ def decode(
                 logger.debug("Assigned parsed value to target '%s' on data_collector", spec.target) # noqa: E501
 
     logger.info("Completed processing files; final data_collector state: %s", data_collector) # noqa: E501
-    # Finally, construct and return the StructuredResults using the collected data.
+    # Finally, construct and return the StructuredData using the collected data.
     if as_dict:
         return dict(data_collector)
     return RESULTS_TYPE_MAP[calctype](**data_collector)
 
-def encode(inp_data: ProgramInput, program: str) -> NativeInput:
-    """Encode a ProgramInput object to a NativeInput object.
+def encode(inp_data: CalcSpec, program: str) -> NativeInput:
+    """Encode a CalcSpec object to a NativeInput object.
 
     Args:
-        inp_data: The ProgramInput object to encode.
+        inp_data: The CalcSpec object to encode.
         program: The program for which to encode the input.
 
     Returns:

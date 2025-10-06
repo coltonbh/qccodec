@@ -1,12 +1,13 @@
 import inspect
 import shutil
+from collections.abc import Callable
 from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Optional, Union
+from typing import Any
 
 import pytest
-from qcio import CalcType, ProgramInput
+from qcio import CalcSpec, CalcType
 from qcio.utils import water
 
 from qccodec.codec import decode
@@ -47,11 +48,11 @@ def crest_file(test_data_dir):
 
 @pytest.fixture(scope="session")
 def prog_inp():
-    """Create a function that returns a ProgramInput object with a specified
+    """Create a function that returns a CalcSpec object with a specified
     calculation type."""
 
     def create_prog_input(calctype):
-        return ProgramInput(
+        return CalcSpec(
             structure=water,
             calctype=calctype,
             # Tests depend up this model; do not change
@@ -87,15 +88,15 @@ class ParserTestCase:
 
     name: str
     parser: Callable
-    contents: Union[str, Path]
+    contents: str | Path
     contents_stdout: bool
     calctype: CalcType
     success: bool
     decode_exc: bool = True
-    answer: Optional[Any] = None
+    answer: Any | None = None
     clear_registry: bool = True
-    extra_files: Optional[list[str]] = None
-    extra_files_names: Optional[list[str]] = None
+    extra_files: list[str] | None = None
+    extra_files_names: list[str] | None = None
 
 
 def _load_contents(directory, contents):
@@ -128,7 +129,7 @@ def _test_parser_direct(tc, contents, directory, prog_inp, parser_spec):
         tc: The TestCase object containing the test parameters.
         contents: The contents to be parsed.
         directory: The directory containing the test data files.
-        prog_inp: The function to create ProgramInput objects.
+        prog_inp: The function to create CalcSpec objects.
         parser_spec: The specification of the parser being tested.
     """
     if tc.success:
@@ -168,7 +169,7 @@ def _test_decode_integration(tc, contents, directory, prog_inp, program, parser_
         tc: The TestCase object containing the test parameters.
         contents: The contents to be parsed (needed if tc.contents_stdout is True).
         directory: The directory containing the test data files.
-        prog_inp: The function to create ProgramInput objects.
+        prog_inp: The function to create CalcSpec objects.
         program: The name of the program being tested.
         parser_spec: The specification of the parser being tested.
 

@@ -1,7 +1,7 @@
 from collections.abc import Mapping
 from typing import Any
 
-from qcio import CalcType, ProgramInput
+from qcio import CalcSpec, CalcType
 
 from qccodec.exceptions import EncoderError
 from qccodec.models import NativeInput
@@ -57,11 +57,11 @@ def _fmt(key: str, value: Any) -> Any:
     return value
 
 
-def encode(inp_obj: ProgramInput) -> NativeInput:
-    """Translate a ProgramInput into ORCA input files.
+def encode(inp_obj: CalcSpec) -> NativeInput:
+    """Translate a CalcSpec into ORCA input files.
 
     Args:
-        inp_obj: The qcio ProgramInput object for a computation.
+        inp_obj: The qcio CalcSpec object for a computation.
 
     Returns:
         NativeInput with .input being an orca.inp file and .geometry an xyz file.

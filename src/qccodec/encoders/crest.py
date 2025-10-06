@@ -3,7 +3,7 @@ import os
 from typing import Any
 
 import tomli_w
-from qcio import CalcType, ProgramInput
+from qcio import CalcSpec, CalcType
 
 from qccodec.exceptions import EncoderError
 from qccodec.models import NativeInput
@@ -17,11 +17,11 @@ SUPPORTED_CALCTYPES = {
 }
 
 
-def encode(inp_obj: ProgramInput) -> NativeInput:
-    """Translate a ProgramInput into CREST inputs files.
+def encode(inp_obj: CalcSpec) -> NativeInput:
+    """Translate a CalcSpec into CREST inputs files.
 
     Args:
-        inp_obj: The qcio ProgramInput object for a computation.
+        inp_obj: The qcio CalcSpec object for a computation.
 
     Returns:
         NativeInput with .input_files being a crest.toml file and .geometry_file the
@@ -37,23 +37,23 @@ def encode(inp_obj: ProgramInput) -> NativeInput:
     )
 
 
-def validate_input(inp_obj: ProgramInput):
+def validate_input(inp_obj: CalcSpec):
     """Validate the input for CREST.
 
     Args:
-        inp_obj: The qcio ProgramInput object for a computation.
+        inp_obj: The qcio CalcSpec object for a computation.
 
     Raises:
         EncoderError: If the input is invalid.
     """
-    # These values come from other parts of the ProgramInput and should not be set
+    # These values come from other parts of the CalcSpec and should not be set
     # in the keywords.
     non_allowed_keywords = ["charge", "uhf"]
     for keyword in non_allowed_keywords:
         if keyword in inp_obj.keywords:
             raise EncoderError(
                 f"{keyword} should not be set in keywords for CREST. It is already set "
-                "on the Structure or ProgramInput elsewhere.",
+                "on the Structure or CalcSpec elsewhere.",
             )
     if "runtype" in inp_obj.keywords:
         _validate_runtype_calctype(inp_obj.keywords["runtype"], inp_obj.calctype)
@@ -91,8 +91,8 @@ def _validate_runtype_calctype(runtype: str, calctype: CalcType):
         )
 
 
-def _to_toml_dict(inp_obj: ProgramInput, struct_filename: str) -> dict[str, Any]:
-    """Convert a ProgramInput object to a dictionary in the CREST format of TOML.
+def _to_toml_dict(inp_obj: CalcSpec, struct_filename: str) -> dict[str, Any]:
+    """Convert a CalcSpec object to a dictionary in the CREST format of TOML.
 
     This function makes it easier to test for the correct TOML structure.
     """

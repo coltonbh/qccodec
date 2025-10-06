@@ -6,8 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Removed
+
+- 🚨Python 3.9 support. Minimum supported version is now 3.10.
+
 ### Changed
 
+- Updated to `qcio>=0.15.0` which incorporates new `qcio` nomenclature.
 - Changed TeraChem encoder `Enum` lookups to compare `Enums` directly instead of string value.
 - Updated `prog_inp` pytest fixture to have no keywords so that it can be reused in other outside of TeraChem.
 
