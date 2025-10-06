@@ -37,7 +37,7 @@ def encode(inp_obj: CalcSpec) -> NativeInput:
     elif inp_obj.calctype == CalcType.transition_state:
         calctype = "ts"
     else:
-        calctype = inp_obj.calctype
+        calctype = inp_obj.calctype.value
 
     # Collect lines for input file
     inp_lines = []

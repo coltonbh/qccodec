@@ -1,8 +1,8 @@
+from typing import Any
+
 from qcio import Results
 
-optimization: list[Results] = [
-    Results(**val)  # type: ignore
-    for val in [
+optimization_dicts: list[dict[str, Any]] = [
         {
             "input_data": {
                 "structure": {
@@ -352,4 +352,5 @@ optimization: list[Results] = [
             "provenance": {"program": "crest", "program_version": "3.0.2"},
         },
     ]
-]
+
+optimization: list[Results] = [Results(**val) for val in optimization_dicts]

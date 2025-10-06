@@ -245,18 +245,18 @@ test_cases = [
         clear_registry=False,
         extra_files=["optim.xyz"],
     ),
-#     ParserTestCase(
-#         name="Parse trajectory excited state",
-#         parser=parse_trajectory,
-#         contents=Path("excited-state-opt.out"),
-#         contents_stdout=True,
-#         calctype=CalcType.optimization,
-#         success=True,
-#         answer=trajectories.es_trajectory,
-#         clear_registry=False,
-#         extra_files=["es_optim.xyz"],
-#         extra_files_names=["optim.xyz"],
-#     ),
+    ParserTestCase(
+        name="Parse trajectory excited state",
+        parser=parse_trajectory,
+        contents=Path("excited-state-opt.out"),
+        contents_stdout=True,
+        calctype=CalcType.optimization,
+        success=True,
+        answer=trajectories.es_trajectory,
+        clear_registry=False,
+        extra_files=["es_optim.xyz"],
+        extra_files_names=["optim.xyz"],
+    ),
 ]
 
 
