@@ -1,17 +1,18 @@
 import math
 import re
+from collections.abc import Generator
 from enum import Enum
 from pathlib import Path
-from typing import Any, Generator, Optional, Union
+from typing import Any
 
 import numpy as np
 from qcconst import constants
 from qcio import (
+    CalcSpec,
     CalcType,
-    ProgramInput,
-    ProgramOutput,
     Provenance,
-    SinglePointResults,
+    Results,
+    SinglePointData,
     Structure,
 )
 
@@ -37,8 +38,8 @@ class CrestFileType(str, Enum):
 
 
 def iter_files(
-    stdout: Optional[str], directory: Optional[Union[Path, str]]
-) -> Generator[tuple[CrestFileType, Union[str, bytes, Path]], None, None]:
+    stdout: str | None, directory: Path | str | None
+) -> Generator[tuple[CrestFileType, str | bytes | Path], None, None]:
     """
     Iterate over the files in a CREST output directory.
 
@@ -90,7 +91,7 @@ def parse_version(string: str) -> str:
 
 @register(filetype=CrestFileType.DIRECTORY, calctypes=[CalcType.conformer_search])
 def parse_conformers(
-    directory: Union[Path, str], stdout: Optional[str], input_data: ProgramInput
+    directory: Path | str, stdout: str | None, input_data: CalcSpec
 ) -> dict[str, Any]:
     """Parse the conformers from the output directory of a CREST conformer search calculation.
 
@@ -125,7 +126,7 @@ def parse_conformers(
 
 @register(filetype=CrestFileType.DIRECTORY, calctypes=[CalcType.conformer_search])
 def parse_rotamers(
-    directory: Union[Path, str], stdout: Optional[str], input_data: ProgramInput
+    directory: Path | str, stdout: str | None, input_data: CalcSpec
 ) -> dict[str, Any]:
     """Parse the rotamers from the output directory of a CREST conformer search calculation.
 
@@ -159,7 +160,7 @@ def parse_rotamers(
 
 
 def _add_identifiers_to_structures(
-    structures: list[Structure], input_data: ProgramInput
+    structures: list[Structure], input_data: CalcSpec
 ) -> None:
     """Add identifiers to a list of Structure objects if the 'topo' is unchanged."""
     if input_data.keywords.get("topo", True):
@@ -309,10 +310,10 @@ def parse_g98_normal_modes(contents: str) -> list[list[list[float]]]:
     target="trajectory",
 )
 def parse_trajectory(
-    directory: Union[Path, str],
+    directory: Path | str,
     stdout: str,
-    input_data: ProgramInput,
-) -> list[ProgramOutput]:
+    input_data: CalcSpec,
+) -> list[Results]:
     """Parse the output directory of a CREST optimization calculation.
 
     Args:
@@ -321,7 +322,7 @@ def parse_trajectory(
         input_data: The input object used for the calculation.
 
     Returns:
-        The parsed optimization results as a list of ProgramOutput objects.
+        The parsed optimization results as a list of Results objects.
     """
     # Read in the xyz file containing the trajectory
     directory = Path(directory)
@@ -344,15 +345,15 @@ def parse_trajectory(
     program_version = parse_version(stdout)
 
     # Create the optimization trajectory
-    trajectory: list[ProgramOutput] = [
-        ProgramOutput(
-            input_data=ProgramInput(
+    trajectory: list[Results] = [
+        Results(
+            input_data=CalcSpec(
                 calctype=CalcType.gradient,
                 structure=struct,
                 model=input_data.model,
             ),
             success=True,
-            results=SinglePointResults(energy=energy, gradient=fake_gradient),
+            data=SinglePointData(energy=energy, gradient=fake_gradient),
             provenance=Provenance(
                 program="crest",
                 program_version=program_version,
@@ -368,12 +369,12 @@ def parse_trajectory(
         contents = enegrad.read_text()
         gradient = parse_gradient(contents)
         # Fill in final gradient
-        trajectory[-1].results.gradient[:] = gradient
+        trajectory[-1].data.gradient[:] = gradient
 
     else:
         # Calculation failed, so set the last .success = False
         final_po = trajectory[-1].model_dump()
         final_po["success"] = False
-        trajectory[-1] = ProgramOutput(**final_po)
+        trajectory[-1] = Results(**final_po)
 
     return trajectory

@@ -1,5 +1,5 @@
 import pytest
-from qcio import CalcType, Model, ProgramInput
+from qcio import CalcSpec, CalcType, Model
 from qcio.utils import water
 
 from qccodec.encoders.orca import _validate_keywords, encode
@@ -61,7 +61,7 @@ def test_write_input_files(
     calctype: CalcType, method: str, basis: str, keywords: dict[str, object]
 ):
     """Test write_input_files method."""
-    inp_obj = ProgramInput(
+    inp_obj = CalcSpec(
         calctype=calctype,
         model=Model(method=method, basis=basis),
         structure=water,

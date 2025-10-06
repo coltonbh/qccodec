@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import pytest
-from qcio import CalcType, ProgramOutput
+from qcio import CalcType, Results
 
 from qccodec.exceptions import MatchNotFoundError
 from qccodec.parsers.terachem import (
@@ -272,7 +272,7 @@ def test_terachem_parsers(test_data_dir, prog_inp, tmp_path, test_case):
         for i in range(len(test_case.answer)):
             po_dict = test_case.answer[i].model_dump()
             po_dict["provenance"]["scratch_dir"] = tmp_path
-            test_case.answer[i] = ProgramOutput(**po_dict)
+            test_case.answer[i] = Results(**po_dict)
 
     run_test_harness(test_data_dir, prog_inp, tmp_path, test_case)
 

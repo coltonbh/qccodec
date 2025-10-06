@@ -1,4 +1,4 @@
-from qcio import CalcType, ProgramInput
+from qcio import CalcSpec, CalcType
 
 from qccodec.exceptions import EncoderError
 from qccodec.models import NativeInput
@@ -14,11 +14,11 @@ XYZ_FILENAME = "geometry.xyz"
 PADDING = 20  # padding between keyword and value in tc.in
 
 
-def encode(inp_obj: ProgramInput) -> NativeInput:
-    """Translate a ProgramInput into TeraChem inputs files.
+def encode(inp_obj: CalcSpec) -> NativeInput:
+    """Translate a CalcSpec into TeraChem inputs files.
 
     Args:
-        inp_obj: The qcio ProgramInput object for a computation.
+        inp_obj: The qcio CalcSpec object for a computation.
 
     Returns:
         NativeInput with .input being a tc.in file and .geometry an xyz file.
@@ -37,7 +37,7 @@ def encode(inp_obj: ProgramInput) -> NativeInput:
     elif inp_obj.calctype == CalcType.transition_state:
         calctype = "ts"
     else:
-        calctype = inp_obj.calctype
+        calctype = inp_obj.calctype.value
 
     # Collect lines for input file
     inp_lines = []

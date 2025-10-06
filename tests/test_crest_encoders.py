@@ -1,5 +1,5 @@
 import pytest
-from qcio import ProgramInput
+from qcio import CalcSpec
 from qcio.utils import water
 
 from qccodec.encoders.crest import _to_toml_dict, validate_input
@@ -24,10 +24,10 @@ def test_validate_input(prog_inp):
 
 
 def test_toml_dict():
-    """Test converting a ProgramInput object to a TOML dictionary for CREST."""
+    """Test converting a CalcSpec object to a TOML dictionary for CREST."""
 
     weird_water = water.model_copy(update={"charge": -1, "multiplicity": 2})
-    inp_obj = ProgramInput(
+    inp_obj = CalcSpec(
         structure=weird_water,
         calctype="conformer_search",
         model={"method": "gfn2"},
@@ -47,7 +47,7 @@ def test_toml_dict():
     assert toml_dict["calculation"]["level"][0]["alpb"] == "acetonitrile"
 
     # Respects explicitly set threads and handles no "calculation" key
-    inp_obj = ProgramInput(
+    inp_obj = CalcSpec(
         structure=weird_water,
         calctype="conformer_search",
         model={"method": "gfn2"},

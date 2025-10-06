@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import pytest
-from qcio import CalcType, ProgramInput
+from qcio import CalcSpec, CalcType
 
 from qccodec.parsers.crest import (
     parse_conformers,
@@ -210,7 +210,7 @@ def test_parse_conformers_charge_multiplicity_updates(test_data_dir, prog_inp):
     prog_input_dict["structure"]["multiplicity"] = 3
     # Using fake prog_input for water; need .structure.charge and .multiplicity
     directory = test_data_dir / "crest"
-    data = parse_conformers(directory, None, ProgramInput(**prog_input_dict))
+    data = parse_conformers(directory, None, CalcSpec(**prog_input_dict))
     # Check conformer energies
     for struct in data["conformers"]:
         assert struct.charge == -2
@@ -225,7 +225,7 @@ def test_parse_rotamers_charge_multiplicity_updates(test_data_dir, prog_inp):
     prog_input_dict["structure"]["multiplicity"] = 5
     # Using fake prog_input for water; need .structure.charge and .multiplicity
     directory = test_data_dir / "crest"
-    data = parse_rotamers(directory, None, ProgramInput(**prog_input_dict))
+    data = parse_rotamers(directory, None, CalcSpec(**prog_input_dict))
     # Check conformer energies
     for struct in data["rotamers"]:
         assert struct.charge == 3

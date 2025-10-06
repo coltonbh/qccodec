@@ -1,7 +1,7 @@
 """Simple data models to support parsing of QM program output files."""
 
 from dataclasses import dataclass
-from typing import Any, Optional, Union
+from typing import Any
 
 from .exceptions import DataCollectorError
 
@@ -9,7 +9,7 @@ from .exceptions import DataCollectorError
 class DataCollector(dict):
     """A dictionary for collecting data from parsers."""
 
-    def add_data(self, target: Union[str, tuple[str, ...]], value: Any) -> None:
+    def add_data(self, target: str | tuple[str, ...], value: Any) -> None:
         """
         Assign a value into the DataCollector at the specified target.
 
@@ -41,8 +41,8 @@ class NativeInput:
     """
 
     input_file: str
-    geometry_file: Optional[str] = None
-    geometry_filename: Optional[str] = None
+    geometry_file: str | None = None
+    geometry_filename: str | None = None
 
     def __post_init__(self):
         """Ensure that geometry_filename is set if geometry is set."""

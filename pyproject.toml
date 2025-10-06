@@ -4,9 +4,13 @@ version = "0.7.8"
 description = "A package for parsing Quantum Chemistry program file outputs into structured qcio data objects."
 readme = "README.md"
 authors = [{ name = "Colton Hicks", email = "github@coltonhicks.com" }]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = { file = "LICENSE" }
-dependencies = ["qcio>=0.14.0", "tomli-w>=1.0.0", "qcconst>=0.2.1"]
+dependencies = [
+    "tomli-w>=1.0.0",
+    "qcconst>=0.2.1",
+    "qcio>=0.15.0",
+]
 
 classifiers = [
     "Intended Audience :: Developers",
@@ -14,11 +18,11 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Chemistry",
     "Topic :: Scientific/Engineering :: Physics",
     "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Operating System :: OS Independent",
 ]
 

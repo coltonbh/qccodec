@@ -102,7 +102,7 @@ Directory parsers may also return a single target value instead of a dictionary.
     calctypes=[CalcType.optimization],
     target="trajectory", # Note target!
 )
-def parse_trajectory(directory: Path, stdout: str, input_data: ProgramInput) -> list[ProgramOutput]:
+def parse_trajectory(directory: Path, stdout: str, input_data: ProgramInput) -> list[Results]:
     """Parse the output directory of a TeraChem optimization calculation into a trajectory.
 
     Args:
@@ -111,10 +111,10 @@ def parse_trajectory(directory: Path, stdout: str, input_data: ProgramInput) -> 
         input_data: The input object used for the calculation.
 
     Returns:
-        A list of ProgramOutput objects.
+        A list of Results objects.
     """
     # Create the trajectory
-    trajectory: list[ProgramOutput] = []
+    trajectory: list[Results] = []
     # Parsing logic here...
     return trajectory
 ```

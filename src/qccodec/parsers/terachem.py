@@ -1,17 +1,17 @@
 """Parsers for TeraChem output files."""
 
 import re
+from collections.abc import Generator
 from enum import Enum
 from pathlib import Path
-from typing import Generator, Optional, Union
 
 from qcconst import constants
 from qcio import (
+    CalcSpec,
     CalcType,
-    ProgramInput,
-    ProgramOutput,
     Provenance,
-    SinglePointResults,
+    Results,
+    SinglePointData,
     Structure,
 )
 
@@ -29,8 +29,8 @@ class TeraChemFileType(str, Enum):
 
 
 def iter_files(
-    stdout: Optional[str], directory: Optional[Union[Path, str]]
-) -> Generator[tuple[TeraChemFileType, Union[str, bytes, Path]], None, None]:
+    stdout: str | None, directory: Path | str | None
+) -> Generator[tuple[TeraChemFileType, str | bytes | Path], None, None]:
     """
     Iterate over the files in a TeraChem output directory.
 
@@ -195,10 +195,10 @@ def parse_nmo(contents: str) -> int:
     target="trajectory",
 )
 def parse_trajectory(
-    directory: Union[Path, str],
+    directory: Path | str,
     stdout: str,
-    input_data: ProgramInput,
-) -> list[ProgramOutput]:
+    input_data: CalcSpec,
+) -> list[Results]:
     """Parse the output directory of a TeraChem optimization calculation into a trajectory.
 
     Args:
@@ -207,7 +207,7 @@ def parse_trajectory(
         input_data: The input object used for the calculation.
 
     Returns:
-        A list of ProgramOutput objects.
+        A list of Results objects.
     """
     directory = Path(directory)
 
@@ -241,11 +241,11 @@ def parse_trajectory(
     from qccodec import decode
 
     # Create the trajectory
-    trajectory: list[ProgramOutput] = []
+    trajectory: list[Results] = []
 
     for structure, grad_stdout in zip(structures, per_gradient_stdout):
         # Create input data object for each structure and gradient in the trajectory.
-        input_data_obj = ProgramInput(
+        input_data_obj = CalcSpec(
             calctype=CalcType.gradient,
             structure=structure,
             model=input_data.model,
@@ -254,24 +254,24 @@ def parse_trajectory(
         # Create the results object for each structure and gradient in the trajectory.
         full_grad_stdout = initialization_stdout + grad_stdout
         parsed_results = decode("terachem", CalcType.gradient, stdout=full_grad_stdout)
-        assert isinstance(parsed_results, SinglePointResults)  # for mypy
+        assert isinstance(parsed_results, SinglePointData)  # for mypy
 
         spr_data = parsed_results.model_dump()
         spr_data["energy"] = structure.extras[Structure._xyz_comment_key][0]
-        results_obj = SinglePointResults(**spr_data)
+        results_obj = SinglePointData(**spr_data)
         # Create the provenance object for each structure and gradient in the trajectory.
         prov = Provenance(
             program="terachem",
             program_version=parsed_results.extras["program_version"],
             scratch_dir=directory,
         )
-        # Create the ProgramOutput object for each structure and gradient in the trajectory.
-        traj_entry: ProgramOutput = ProgramOutput(
+        # Create the Results object for each structure and gradient in the trajectory.
+        traj_entry: Results = Results(
             input_data=input_data_obj,
             success=True,
-            results=results_obj,
+            data=results_obj,
             provenance=prov,
-            stdout=full_grad_stdout,
+            logs=full_grad_stdout,
         )
         trajectory.append(traj_entry)
 
