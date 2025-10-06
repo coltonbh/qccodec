@@ -1,6 +1,6 @@
 [project]
 name = "qccodec"
-version = "0.7.8"
+version = "0.8.0"
 description = "A package for parsing Quantum Chemistry program file outputs into structured qcio data objects."
 readme = "README.md"
 authors = [{ name = "Colton Hicks", email = "github@coltonhicks.com" }]
