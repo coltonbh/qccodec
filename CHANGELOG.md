@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.8.1] - 2025-10-07
+
 ### Fixed
 
 - Correctly propagate `Structure` charge and multiplicity through TeraChem optimization trajectory parsing.
@@ -239,7 +241,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Can return either `AtomicResult` or `FailedOperation` objects depending on whether calculation succeeded or failed.
 - Tests for all parsers and the main `parse` function.
 
-[unreleased]: https://github.com/coltonbh/qccodec/compare/0.8.0...HEAD
+[unreleased]: https://github.com/coltonbh/qccodec/compare/0.8.1...HEAD
+[0.8.1]: https://github.com/coltonbh/qccodec/releases/tag/0.8.1
 [0.8.0]: https://github.com/coltonbh/qccodec/releases/tag/0.8.0
 [0.7.8]: https://github.com/coltonbh/qccodec/releases/tag/0.7.8
 [0.7.7]: https://github.com/coltonbh/qccodec/releases/tag/0.7.7
