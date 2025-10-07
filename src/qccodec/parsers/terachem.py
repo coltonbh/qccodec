@@ -212,7 +212,11 @@ def parse_trajectory(
     directory = Path(directory)
 
     # Parse the structures
-    structures = Structure.open_multi(directory / "optim.xyz")
+    structures = Structure.open_multi(
+        directory / "optim.xyz",
+        charge=input_data.structure.charge,
+        multiplicity=input_data.structure.multiplicity,
+    )
 
     # Capture initialization stdout
     regex = r"""^(.*?)                # group-1 = everything before the banner
