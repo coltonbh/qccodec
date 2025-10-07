@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Fixed
+
+- Correctly propagate `Structure` charge and multiplicity through TeraChem optimization trajectory parsing.
+
 ## [0.8.0] - 2025-10-06
 
 ### Removed
