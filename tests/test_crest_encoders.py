@@ -6,8 +6,8 @@ from qccodec.encoders.crest import _to_toml_dict, validate_input
 from qccodec.exceptions import EncoderError
 
 
-def test_validate_input(prog_inp):
-    inp_obj = prog_inp("conformer_search")
+def test_validate_input(spec):
+    inp_obj = spec("conformer_search")
     validate_input(inp_obj)
 
     with pytest.raises(EncoderError):

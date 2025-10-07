@@ -189,12 +189,12 @@ test_cases = [
 
 
 @pytest.mark.parametrize("test_case", test_cases, ids=lambda tc: tc.name)
-def test_crest_parsers(test_data_dir, prog_inp, tmp_path, test_case):
+def test_crest_parsers(test_data_dir, spec, tmp_path, test_case):
     """
     Tests the crest parsers to ensure that they correctly parse the output files and
     behave correctly within the decode function.
     """
-    run_test_harness(test_data_dir, prog_inp, tmp_path, test_case)
+    run_test_harness(test_data_dir, spec, tmp_path, test_case)
 
 
 ####################################################
@@ -202,9 +202,9 @@ def test_crest_parsers(test_data_dir, prog_inp, tmp_path, test_case):
 ####################################################
 
 
-def test_parse_conformers_charge_multiplicity_updates(test_data_dir, prog_inp):
+def test_parse_conformers_charge_multiplicity_updates(test_data_dir, spec):
     # Change charge and multiplicity in prog_input
-    prog_input = prog_inp("conformer_search")
+    prog_input = spec("conformer_search")
     prog_input_dict = prog_input.model_dump()
     prog_input_dict["structure"]["charge"] = -2
     prog_input_dict["structure"]["multiplicity"] = 3
@@ -217,9 +217,9 @@ def test_parse_conformers_charge_multiplicity_updates(test_data_dir, prog_inp):
         assert struct.multiplicity == 3
 
 
-def test_parse_rotamers_charge_multiplicity_updates(test_data_dir, prog_inp):
+def test_parse_rotamers_charge_multiplicity_updates(test_data_dir, spec):
     # Change charge and multiplicity in prog_input
-    prog_input = prog_inp("conformer_search")
+    prog_input = spec("conformer_search")
     prog_input_dict = prog_input.model_dump()
     prog_input_dict["structure"]["charge"] = 3
     prog_input_dict["structure"]["multiplicity"] = 5
