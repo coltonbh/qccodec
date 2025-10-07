@@ -47,7 +47,7 @@ def crest_file(test_data_dir):
 
 
 @pytest.fixture(scope="session")
-def spec():
+def spec_factory():
     """Create a function that returns a CalcSpec object with a specified
     calculation type."""
 
@@ -125,19 +125,14 @@ def get_target_value(results, target):
     return d.get(keys[-1], None)
 
 
-def _clone_calc_spec(spec: CalcSpec) -> CalcSpec:
-    """Create a deep copy of a CalcSpec so tests can reuse pristine specs."""
-    return CalcSpec(**spec.model_dump())
-
-
-def _test_parser_direct(tc, contents, directory, calc_spec, parser_spec):
+def _test_parser_direct(tc, contents, directory, spec, parser_spec):
     """Test the parser function directly with the provided contents.
 
     Args:
         tc: The TestCase object containing the test parameters.
         contents: The contents to be parsed.
         directory: The directory containing the test data files.
-        calc_spec: The CalcSpec to provide to directory parsers.
+        spec: The CalcSpec to provide to directory parsers.
         parser_spec: The specification of the parser being tested.
     """
     if tc.success:
@@ -146,7 +141,7 @@ def _test_parser_direct(tc, contents, directory, calc_spec, parser_spec):
             parsed = tc.parser(
                 directory,
                 contents if tc.contents_stdout else None,
-                _clone_calc_spec(calc_spec),
+                spec,
             )
         else:
             # Successful execution of file parser
@@ -162,14 +157,14 @@ def _test_parser_direct(tc, contents, directory, calc_spec, parser_spec):
                 tc.parser(
                     directory,
                     contents if tc.contents_stdout else None,
-                    _clone_calc_spec(calc_spec),
+                    spec,
                 )
             else:
                 # Expect an exception for file parser
                 tc.parser(contents)
 
 
-def _test_decode_integration(tc, contents, directory, calc_spec, program, parser_spec):
+def _test_decode_integration(tc, contents, directory, spec, program, parser_spec):
     """
     Test the decode() integration, using only the parser under test (unless tc.clear_registry is False).
 
@@ -177,7 +172,7 @@ def _test_decode_integration(tc, contents, directory, calc_spec, program, parser
         tc: The TestCase object containing the test parameters.
         contents: The contents to be parsed (needed if tc.contents_stdout is True).
         directory: The directory containing the test data files.
-        calc_spec: The CalcSpec to provide to decode().
+        spec: The CalcSpec to provide to decode().
         program: The name of the program being tested.
         parser_spec: The specification of the parser being tested.
 
@@ -198,7 +193,7 @@ def _test_decode_integration(tc, contents, directory, calc_spec, program, parser
             tc.calctype,
             stdout=(contents if tc.contents_stdout else None),
             directory=directory,
-            input_data=_clone_calc_spec(calc_spec),
+            input_data=spec,
             as_dict=True,
         )
         if parser_spec.target is not None:
@@ -219,7 +214,7 @@ def _test_decode_integration(tc, contents, directory, calc_spec, program, parser
                     tc.calctype,
                     stdout=(contents if tc.contents_stdout else None),
                     directory=directory,
-                    input_data=_clone_calc_spec(calc_spec),
+                    input_data=spec,
                 )
         else:
             # Failed execution and required is False
@@ -228,7 +223,7 @@ def _test_decode_integration(tc, contents, directory, calc_spec, program, parser
                 tc.calctype,
                 stdout=(contents if tc.contents_stdout else None),
                 directory=directory,
-                input_data=_clone_calc_spec(calc_spec),
+                input_data=spec,
                 as_dict=True,
             )
             final_value = get_target_value(result, parser_spec.target)
@@ -249,18 +244,25 @@ def restore_registry(program: str):
 
 def run_test_harness(test_data_dir, spec_factory, tmp_path, tc):
     """
-    Run the full test harness:
-      1. Load the contents.
-      2. Run the parser directly.
-      3. Temporarily restrict the registry to only the parser under test,
-         and run the decode() integration test.
+    Args:
+        test_data_dir: The base directory containing test data files.
+        spec_factory: A function that creates a CalcSpec given a CalcType.
+        tmp_path: A temporary directory Path for the test.
+        tc: The ParserTestCase object containing the test parameters.
+
+    Notes:
+        Runs the full test harness:
+            1. Load the contents.
+            2. Run the parser directly.
+            3. Temporarily restrict the registry to only the parser under test,
+                and run the decode() integration test.
     """
     program = inspect.getmodule(tc.parser).__name__.split(".")[-1]
     contents = _load_contents(test_data_dir / program, tc.contents)
     # Get the spec for the parser under test.
     parser_spec = registry.get_spec(tc.parser)
 
-    base_calc_spec = tc.calc_spec or spec_factory(tc.calctype)
+    spec = tc.calc_spec or spec_factory(tc.calctype)
 
     # Copy over extra files if provided.
     if tc.extra_files:
@@ -285,7 +287,7 @@ def run_test_harness(test_data_dir, spec_factory, tmp_path, tc):
         filepath.write_text(contents)
 
     # Test the parser directly.
-    _test_parser_direct(tc, contents, tmp_path, base_calc_spec, parser_spec)
+    _test_parser_direct(tc, contents, tmp_path, spec, parser_spec)
 
     # Now test integration via decode() with a restricted registry.
     with restore_registry(program):
@@ -293,6 +295,4 @@ def run_test_harness(test_data_dir, spec_factory, tmp_path, tc):
             # Clear the registry of all other parsers for this program.
             registry.registry.pop(program)
             registry.registry[program] = [parser_spec]
-        _test_decode_integration(
-            tc, contents, tmp_path, base_calc_spec, program, parser_spec
-        )
+        _test_decode_integration(tc, contents, tmp_path, spec, program, parser_spec)
