@@ -27,8 +27,8 @@
 |       ***********************************************************
 
 
-| Job started   Tue Oct  7 18:45:14 2025
-| On ccd5d4e48b54 (available memory: 2269 MB)
+| Job started   Tue Oct  7 18:53:50 2025
+| On ec1a41e54a67 (available memory: 2561 MB)
 
 | ######################################### RUNTIME INFO ##########################################
 | terachem  tc.in 
@@ -36,83 +36,83 @@
 |  NVRM version: NVIDIA UNIX x86_64 Kernel Module  560.35.03  Fri Aug 16 21:39:15 UTC 2024
 |  GCC version:  gcc version 13.3.0 (Ubuntu 13.3.0-6ubuntu2~24.04) 
 
-|       linux-vdso.so.1 (0x00007ffd1bde6000)
-|       libcurl.so.4 => /usr/lib/x86_64-linux-gnu/libcurl.so.4 (0x00007281d9966000)
-|       libz.so.1 => /usr/lib/x86_64-linux-gnu/libz.so.1 (0x00007281d994a000)
-|       libimf.so => /opt/terachem/lib/libimf.so (0x00007281d9200000)
-|       libm.so.6 => /usr/lib/x86_64-linux-gnu/libm.so.6 (0x00007281d9119000)
-|       libmpi.so.12 => /opt/terachem/lib/libmpi.so.12 (0x00007281d7800000)
-|       libdftbplus.so => /opt/terachem/lib/libdftbplus.so (0x00007281d74c8000)
-|       libfsockets.so => /opt/terachem/lib/libfsockets.so (0x00007281d9941000)
-|       libxmlf90.so => /opt/terachem/lib/libxmlf90.so (0x00007281d991a000)
-|       libthcbox.so.1 => /opt/terachem/lib/libthcbox.so.1 (0x00007281d6bc4000)
-|       libOpenMM.so => /opt/terachem/lib/libOpenMM.so (0x00007281d676a000)
-|       libnvToolsExt.so.1 => /opt/terachem/lib/libnvToolsExt.so.1 (0x00007281d6400000)
-|       libgpubox.so.1 => /opt/terachem/lib/libgpubox.so.1 (0x00007281d990d000)
-|       libcpubox.so.1 => /opt/terachem/lib/libcpubox.so.1 (0x00007281d9907000)
-|       libtensorbox.so.1 => /opt/terachem/lib/libtensorbox.so.1 (0x00007281d98eb000)
-|       libiobox.so.1 => /opt/terachem/lib/libiobox.so.1 (0x00007281d98e5000)
-|       libintbox.so.1 => /opt/terachem/lib/libintbox.so.1 (0x00007281c1100000)
-|       libatmx2cbox.so.1 => /opt/terachem/lib/libatmx2cbox.so.1 (0x00007281d9058000)
-|       libperiodicbox.so.1 => /opt/terachem/lib/libperiodicbox.so.1 (0x00007281baa85000)
-|       libsqmbox.so.1 => /opt/terachem/lib/libsqmbox.so.1 (0x00007281ba6e6000)
-|       libgridbox.so.1 => /opt/terachem/lib/libgridbox.so.1 (0x00007281b9dfe000)
-|       libdftbox.so.1 => /opt/terachem/lib/libdftbox.so.1 (0x00007281d666a000)
-|       libcibox.so.1 => /opt/terachem/lib/libcibox.so.1 (0x00007281b9b8b000)
-|       libccbox.so.1 => /opt/terachem/lib/libccbox.so.1 (0x00007281b9802000)
-|       libsimbox.so.1 => /opt/terachem/lib/libsimbox.so.1 (0x00007281d98b9000)
-|       liboptbox.so.1 => /opt/terachem/lib/liboptbox.so.1 (0x00007281d6635000)
-|       libprotobuf.so.25 => /opt/terachem/lib/libprotobuf.so.25 (0x00007281b9399000)
-|       libcommbox.so.1 => /opt/terachem/lib/libcommbox.so.1 (0x00007281b9339000)
-|       libssl.so.3 => /usr/lib/x86_64-linux-gnu/libssl.so.3 (0x00007281b9295000)
-|       libcrypto.so.3 => /usr/lib/x86_64-linux-gnu/libcrypto.so.3 (0x00007281b8e53000)
-|       libcuda.so.1 => /usr/lib/x86_64-linux-gnu/libcuda.so.1 (0x00007281b6c00000)
-|       libcudart.so.11.0 => /opt/terachem/lib/libcudart.so.11.0 (0x00007281b6800000)
-|       libcublas.so.11 => /opt/terachem/lib/libcublas.so.11 (0x00007281b0a00000)
-|       libcufft.so.10 => /opt/terachem/lib/libcufft.so.10 (0x000072819fa00000)
-|       libcusparse.so.11 => /opt/terachem/lib/libcusparse.so.11 (0x000072818ec00000)
-|       libcusolver.so.11 => /opt/terachem/lib/libcusolver.so.11 (0x000072817c800000)
-|       libcublasLt.so.11 => /opt/terachem/lib/libcublasLt.so.11 (0x0000728158200000)
-|       libsvml.so => /opt/terachem/lib/libsvml.so (0x0000728156200000)
-|       libirng.so => /opt/terachem/lib/libirng.so (0x0000728155e00000)
-|       libstdc++.so.6 => /usr/lib/x86_64-linux-gnu/libstdc++.so.6 (0x0000728155bd6000)
-|       libiomp5.so => /opt/terachem/lib/libiomp5.so (0x0000728155600000)
-|       libcilkrts.so.5 => /opt/terachem/lib/libcilkrts.so.5 (0x0000728155200000)
-|       libgcc_s.so.1 => /usr/lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007281d9895000)
-|       libintlc.so.5 => /opt/terachem/lib/libintlc.so.5 (0x0000728154e00000)
-|       libc.so.6 => /usr/lib/x86_64-linux-gnu/libc.so.6 (0x0000728154bd8000)
-|       /lib64/ld-linux-x86-64.so.2 (0x00007281d9a12000)
-|       libnghttp2.so.14 => /usr/lib/x86_64-linux-gnu/libnghttp2.so.14 (0x00007281d660b000)
-|       libidn2.so.0 => /usr/lib/x86_64-linux-gnu/libidn2.so.0 (0x00007281d9037000)
-|       librtmp.so.1 => /usr/lib/x86_64-linux-gnu/librtmp.so.1 (0x00007281b6be1000)
-|       libssh.so.4 => /usr/lib/x86_64-linux-gnu/libssh.so.4 (0x00007281b6b74000)
-|       libpsl.so.5 => /usr/lib/x86_64-linux-gnu/libpsl.so.5 (0x00007281b6b60000)
-|       libgssapi_krb5.so.2 => /usr/lib/x86_64-linux-gnu/libgssapi_krb5.so.2 (0x00007281b6b0c000)
-|       libldap-2.5.so.0 => /usr/lib/x86_64-linux-gnu/libldap-2.5.so.0 (0x00007281b6aad000)
-|       liblber-2.5.so.0 => /usr/lib/x86_64-linux-gnu/liblber-2.5.so.0 (0x00007281b8d9e000)
-|       libzstd.so.1 => /usr/lib/x86_64-linux-gnu/libzstd.so.1 (0x00007281b6731000)
-|       libbrotlidec.so.1 => /usr/lib/x86_64-linux-gnu/libbrotlidec.so.1 (0x00007281b6723000)
-|       librt.so.1 => /usr/lib/x86_64-linux-gnu/librt.so.1 (0x00007281d9890000)
-|       libdl.so.2 => /usr/lib/x86_64-linux-gnu/libdl.so.2 (0x00007281b6aa8000)
-|       libifport.so.5 => /opt/terachem/lib/libifport.so.5 (0x0000728154800000)
-|       libifcoremt.so.5 => /opt/terachem/lib/libifcoremt.so.5 (0x0000728155a40000)
-|       libpthread.so.0 => /usr/lib/x86_64-linux-gnu/libpthread.so.0 (0x00007281b671e000)
-|       libunistring.so.2 => /usr/lib/x86_64-linux-gnu/libunistring.so.2 (0x0000728155456000)
-|       libgnutls.so.30 => /usr/lib/x86_64-linux-gnu/libgnutls.so.30 (0x0000728154615000)
-|       libhogweed.so.6 => /usr/lib/x86_64-linux-gnu/libhogweed.so.6 (0x00007281b66d6000)
-|       libnettle.so.8 => /usr/lib/x86_64-linux-gnu/libnettle.so.8 (0x00007281b6690000)
-|       libgmp.so.10 => /usr/lib/x86_64-linux-gnu/libgmp.so.10 (0x00007281b097e000)
-|       libkrb5.so.3 => /usr/lib/x86_64-linux-gnu/libkrb5.so.3 (0x000072819f935000)
-|       libk5crypto.so.3 => /usr/lib/x86_64-linux-gnu/libk5crypto.so.3 (0x00007281b6661000)
-|       libcom_err.so.2 => /usr/lib/x86_64-linux-gnu/libcom_err.so.2 (0x00007281b0978000)
-|       libkrb5support.so.0 => /usr/lib/x86_64-linux-gnu/libkrb5support.so.0 (0x00007281b096a000)
-|       libsasl2.so.2 => /usr/lib/x86_64-linux-gnu/libsasl2.so.2 (0x00007281b094f000)
-|       libbrotlicommon.so.1 => /usr/lib/x86_64-linux-gnu/libbrotlicommon.so.1 (0x00007281b092c000)
-|       libp11-kit.so.0 => /usr/lib/x86_64-linux-gnu/libp11-kit.so.0 (0x000072818eac5000)
-|       libtasn1.so.6 => /usr/lib/x86_64-linux-gnu/libtasn1.so.6 (0x00007281b0914000)
-|       libkeyutils.so.1 => /usr/lib/x86_64-linux-gnu/libkeyutils.so.1 (0x00007281b090d000)
-|       libresolv.so.2 => /usr/lib/x86_64-linux-gnu/libresolv.so.2 (0x00007281b08f9000)
-|       libffi.so.8 => /usr/lib/x86_64-linux-gnu/libffi.so.8 (0x00007281b08ec000)
+|  	linux-vdso.so.1 (0x00007fff655ba000)
+|  	libcurl.so.4 => /usr/lib/x86_64-linux-gnu/libcurl.so.4 (0x00007a60b28d6000)
+|  	libz.so.1 => /usr/lib/x86_64-linux-gnu/libz.so.1 (0x00007a60b28ba000)
+|  	libimf.so => /opt/terachem/lib/libimf.so (0x00007a60b2200000)
+|  	libm.so.6 => /usr/lib/x86_64-linux-gnu/libm.so.6 (0x00007a60b2119000)
+|  	libmpi.so.12 => /opt/terachem/lib/libmpi.so.12 (0x00007a60b0800000)
+|  	libdftbplus.so => /opt/terachem/lib/libdftbplus.so (0x00007a60b04c8000)
+|  	libfsockets.so => /opt/terachem/lib/libfsockets.so (0x00007a60b28b1000)
+|  	libxmlf90.so => /opt/terachem/lib/libxmlf90.so (0x00007a60b20f2000)
+|  	libthcbox.so.1 => /opt/terachem/lib/libthcbox.so.1 (0x00007a60afbc4000)
+|  	libOpenMM.so => /opt/terachem/lib/libOpenMM.so (0x00007a60af76a000)
+|  	libnvToolsExt.so.1 => /opt/terachem/lib/libnvToolsExt.so.1 (0x00007a60af400000)
+|  	libgpubox.so.1 => /opt/terachem/lib/libgpubox.so.1 (0x00007a60b28a4000)
+|  	libcpubox.so.1 => /opt/terachem/lib/libcpubox.so.1 (0x00007a60b289e000)
+|  	libtensorbox.so.1 => /opt/terachem/lib/libtensorbox.so.1 (0x00007a60b20d6000)
+|  	libiobox.so.1 => /opt/terachem/lib/libiobox.so.1 (0x00007a60b2898000)
+|  	libintbox.so.1 => /opt/terachem/lib/libintbox.so.1 (0x00007a609a100000)
+|  	libatmx2cbox.so.1 => /opt/terachem/lib/libatmx2cbox.so.1 (0x00007a60af6a9000)
+|  	libperiodicbox.so.1 => /opt/terachem/lib/libperiodicbox.so.1 (0x00007a6093a85000)
+|  	libsqmbox.so.1 => /opt/terachem/lib/libsqmbox.so.1 (0x00007a60936e6000)
+|  	libgridbox.so.1 => /opt/terachem/lib/libgridbox.so.1 (0x00007a6092dfe000)
+|  	libdftbox.so.1 => /opt/terachem/lib/libdftbox.so.1 (0x00007a6092cfe000)
+|  	libcibox.so.1 => /opt/terachem/lib/libcibox.so.1 (0x00007a6092a8b000)
+|  	libccbox.so.1 => /opt/terachem/lib/libccbox.so.1 (0x00007a6092702000)
+|  	libsimbox.so.1 => /opt/terachem/lib/libsimbox.so.1 (0x00007a60b20ae000)
+|  	liboptbox.so.1 => /opt/terachem/lib/liboptbox.so.1 (0x00007a60b2079000)
+|  	libprotobuf.so.25 => /opt/terachem/lib/libprotobuf.so.25 (0x00007a6092299000)
+|  	libcommbox.so.1 => /opt/terachem/lib/libcommbox.so.1 (0x00007a60af649000)
+|  	libssl.so.3 => /usr/lib/x86_64-linux-gnu/libssl.so.3 (0x00007a60921f5000)
+|  	libcrypto.so.3 => /usr/lib/x86_64-linux-gnu/libcrypto.so.3 (0x00007a6091db3000)
+|  	libcuda.so.1 => /usr/lib/x86_64-linux-gnu/libcuda.so.1 (0x00007a608fc00000)
+|  	libcudart.so.11.0 => /opt/terachem/lib/libcudart.so.11.0 (0x00007a608f800000)
+|  	libcublas.so.11 => /opt/terachem/lib/libcublas.so.11 (0x00007a6089a00000)
+|  	libcufft.so.10 => /opt/terachem/lib/libcufft.so.10 (0x00007a6078a00000)
+|  	libcusparse.so.11 => /opt/terachem/lib/libcusparse.so.11 (0x00007a6067c00000)
+|  	libcusolver.so.11 => /opt/terachem/lib/libcusolver.so.11 (0x00007a6055800000)
+|  	libcublasLt.so.11 => /opt/terachem/lib/libcublasLt.so.11 (0x00007a6031200000)
+|  	libsvml.so => /opt/terachem/lib/libsvml.so (0x00007a602f200000)
+|  	libirng.so => /opt/terachem/lib/libirng.so (0x00007a602ee00000)
+|  	libstdc++.so.6 => /usr/lib/x86_64-linux-gnu/libstdc++.so.6 (0x00007a602ebd6000)
+|  	libiomp5.so => /opt/terachem/lib/libiomp5.so (0x00007a602e600000)
+|  	libcilkrts.so.5 => /opt/terachem/lib/libcilkrts.so.5 (0x00007a602e200000)
+|  	libgcc_s.so.1 => /usr/lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007a60b2059000)
+|  	libintlc.so.5 => /opt/terachem/lib/libintlc.so.5 (0x00007a602de00000)
+|  	libc.so.6 => /usr/lib/x86_64-linux-gnu/libc.so.6 (0x00007a602dbd8000)
+|  	/lib64/ld-linux-x86-64.so.2 (0x00007a60b2982000)
+|  	libnghttp2.so.14 => /usr/lib/x86_64-linux-gnu/libnghttp2.so.14 (0x00007a60af61f000)
+|  	libidn2.so.0 => /usr/lib/x86_64-linux-gnu/libidn2.so.0 (0x00007a60b2038000)
+|  	librtmp.so.1 => /usr/lib/x86_64-linux-gnu/librtmp.so.1 (0x00007a608fb3d000)
+|  	libssh.so.4 => /usr/lib/x86_64-linux-gnu/libssh.so.4 (0x00007a608fad0000)
+|  	libpsl.so.5 => /usr/lib/x86_64-linux-gnu/libpsl.so.5 (0x00007a60af60b000)
+|  	libgssapi_krb5.so.2 => /usr/lib/x86_64-linux-gnu/libgssapi_krb5.so.2 (0x00007a608f7ac000)
+|  	libldap-2.5.so.0 => /usr/lib/x86_64-linux-gnu/libldap-2.5.so.0 (0x00007a608f74d000)
+|  	liblber-2.5.so.0 => /usr/lib/x86_64-linux-gnu/liblber-2.5.so.0 (0x00007a6091da2000)
+|  	libzstd.so.1 => /usr/lib/x86_64-linux-gnu/libzstd.so.1 (0x00007a608f67e000)
+|  	libbrotlidec.so.1 => /usr/lib/x86_64-linux-gnu/libbrotlidec.so.1 (0x00007a608fac2000)
+|  	librt.so.1 => /usr/lib/x86_64-linux-gnu/librt.so.1 (0x00007a608fabd000)
+|  	libdl.so.2 => /usr/lib/x86_64-linux-gnu/libdl.so.2 (0x00007a608fab8000)
+|  	libifport.so.5 => /opt/terachem/lib/libifport.so.5 (0x00007a602d800000)
+|  	libifcoremt.so.5 => /opt/terachem/lib/libifcoremt.so.5 (0x00007a602ea40000)
+|  	libpthread.so.0 => /usr/lib/x86_64-linux-gnu/libpthread.so.0 (0x00007a608fab3000)
+|  	libunistring.so.2 => /usr/lib/x86_64-linux-gnu/libunistring.so.2 (0x00007a602e456000)
+|  	libgnutls.so.30 => /usr/lib/x86_64-linux-gnu/libgnutls.so.30 (0x00007a602d615000)
+|  	libhogweed.so.6 => /usr/lib/x86_64-linux-gnu/libhogweed.so.6 (0x00007a60899b8000)
+|  	libnettle.so.8 => /usr/lib/x86_64-linux-gnu/libnettle.so.8 (0x00007a6089972000)
+|  	libgmp.so.10 => /usr/lib/x86_64-linux-gnu/libgmp.so.10 (0x00007a60898f0000)
+|  	libkrb5.so.3 => /usr/lib/x86_64-linux-gnu/libkrb5.so.3 (0x00007a6078935000)
+|  	libk5crypto.so.3 => /usr/lib/x86_64-linux-gnu/libk5crypto.so.3 (0x00007a6078906000)
+|  	libcom_err.so.2 => /usr/lib/x86_64-linux-gnu/libcom_err.so.2 (0x00007a608faad000)
+|  	libkrb5support.so.0 => /usr/lib/x86_64-linux-gnu/libkrb5support.so.0 (0x00007a608f670000)
+|  	libsasl2.so.2 => /usr/lib/x86_64-linux-gnu/libsasl2.so.2 (0x00007a6067be5000)
+|  	libbrotlicommon.so.1 => /usr/lib/x86_64-linux-gnu/libbrotlicommon.so.1 (0x00007a6067bc2000)
+|  	libp11-kit.so.0 => /usr/lib/x86_64-linux-gnu/libp11-kit.so.0 (0x00007a602e0c5000)
+|  	libtasn1.so.6 => /usr/lib/x86_64-linux-gnu/libtasn1.so.6 (0x00007a6067baa000)
+|  	libkeyutils.so.1 => /usr/lib/x86_64-linux-gnu/libkeyutils.so.1 (0x00007a608f669000)
+|  	libresolv.so.2 => /usr/lib/x86_64-linux-gnu/libresolv.so.2 (0x00007a60898dc000)
+|  	libffi.so.8 => /usr/lib/x86_64-linux-gnu/libffi.so.8 (0x00007a60788f9000)
 | #################################################################################################
 
 | Checking Amazon Cloud instance ID...   Not found
@@ -126,8 +126,8 @@
 
 | **************************************************************
 |  Greetings, Martinez Group! You have 1000 licenses in total
-|  IN USE: 19
-|  AVAILABLE: 981
+|  IN USE: 21
+|  AVAILABLE: 979
 | **************************************************************
 
 -----------------------------------
@@ -144,7 +144,7 @@ Processed Input file:
 Jobname: geometry
 Scratch data will be generated
 Scratch directory: ./scr.geometry
-| Random number seed: 1782946761
+| Random number seed: 400954353
 
 XYZ coordinates geometry.xyz
 Molden File Output: ./scr.geometry/geometry.molden
@@ -250,7 +250,7 @@ Using WF guess from previous time step during MD.
 ------------------------------------------------------------------------
 | Skip purify step
 | THRESPDP set to 1.00e+00
-|    1     0.5958833850     -38.6349800256     -38.6349800256     0.00  
+|    1     0.5958833850     -38.6349800256     -38.6349800256     0.01  
 |    2     0.1867885819      -0.5501028943     -39.1850829199     0.00  
 |    3     0.0202789520      -0.0305053440     -39.2155882639     0.00  
 |    4     0.0025905168      -0.0005577864     -39.2161460503     0.00  
@@ -377,5 +377,5 @@ Gradient units are Hartree/Bohr
 Writing out molden info
 | Total processing time: 0.21 sec 
 
-| Job finished: Tue Oct  7 18:45:17 2025
+| Job finished: Tue Oct  7 18:53:53 2025
 

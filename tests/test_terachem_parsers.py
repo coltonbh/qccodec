@@ -234,6 +234,20 @@ test_cases = [
         answer=trajectories.trajectory,
         clear_registry=False,
         extra_files=["optim.xyz"],
+        calc_spec=trajectories.trajectory_spec,
+    ),
+    ParserTestCase(
+        name="Parse trajectory charge and multiplicity",
+        parser=parse_trajectory,
+        contents=Path("ch3.opt.out"),
+        contents_stdout=True,
+        calctype=CalcType.optimization,
+        success=True,
+        answer=trajectories.ch3_trajectory,
+        clear_registry=False,
+        extra_files=["ch3optim.xyz"],
+        extra_files_names=["optim.xyz"],
+        calc_spec=trajectories.ch3_trajectory_spec,
     ),
     ParserTestCase(
         name="Parse trajectory MatchNotFound",
@@ -244,6 +258,7 @@ test_cases = [
         success=False,
         clear_registry=False,
         extra_files=["optim.xyz"],
+        calc_spec=trajectories.trajectory_spec,
     ),
     ParserTestCase(
         name="Parse trajectory excited state",
@@ -261,7 +276,7 @@ test_cases = [
 
 
 @pytest.mark.parametrize("test_case", test_cases, ids=lambda tc: tc.name)
-def test_terachem_parsers(test_data_dir, prog_inp, tmp_path, test_case):
+def test_terachem_parsers(test_data_dir, spec, tmp_path, test_case):
     """
     Tests the terachem parsers to ensure that they correctly parse the output files and
     behave correctly within the decode function.
@@ -274,7 +289,7 @@ def test_terachem_parsers(test_data_dir, prog_inp, tmp_path, test_case):
             po_dict["provenance"]["scratch_dir"] = tmp_path
             test_case.answer[i] = Results(**po_dict)
 
-    run_test_harness(test_data_dir, prog_inp, tmp_path, test_case)
+    run_test_harness(test_data_dir, spec, tmp_path, test_case)
 
 
 ####################################################
