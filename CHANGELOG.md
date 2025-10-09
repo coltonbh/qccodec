@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.9.0] - 2025-10-09
+
 ### Changed
 
 - Updated to `qcio` 0.16.0 which reverts input data structure names.
@@ -245,7 +247,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Can return either `AtomicResult` or `FailedOperation` objects depending on whether calculation succeeded or failed.
 - Tests for all parsers and the main `parse` function.
 
-[unreleased]: https://github.com/coltonbh/qccodec/compare/0.8.1...HEAD
+[unreleased]: https://github.com/coltonbh/qccodec/compare/0.9.0...HEAD
+[0.9.0]: https://github.com/coltonbh/qccodec/releases/tag/0.9.0
 [0.8.1]: https://github.com/coltonbh/qccodec/releases/tag/0.8.1
 [0.8.0]: https://github.com/coltonbh/qccodec/releases/tag/0.8.0
 [0.7.8]: https://github.com/coltonbh/qccodec/releases/tag/0.7.8
