@@ -6,13 +6,13 @@ from pathlib import Path
 from typing import Any
 
 from qcio import (
-    CalcSpec,
     CalcType,
     ConformerSearchData,
     OptimizationData,
+    ProgramInput,
     SinglePointData,
     StructuredData,
-    StructuredSpecs,
+    StructuredInputs,
 )
 
 from .exceptions import DecoderError, EncoderError, MatchNotFoundError
@@ -44,7 +44,7 @@ def decode(
     *,
     stdout: str | None = None,
     directory: str | Path | None = None,
-    input_data: StructuredSpecs | None = None,
+    input_data: StructuredInputs | None = None,
     as_dict: bool = False,
 ) -> StructuredData | dict[str, Any]:
     """Decode the output of a quantum chemistry program into a standardized output.
@@ -125,11 +125,11 @@ def decode(
         return dict(data_collector)
     return RESULTS_TYPE_MAP[calctype](**data_collector)
 
-def encode(inp_data: CalcSpec, program: str) -> NativeInput:
-    """Encode a CalcSpec object to a NativeInput object.
+def encode(inp_data: ProgramInput, program: str) -> NativeInput:
+    """Encode a ProgramInput object to a NativeInput object.
 
     Args:
-        inp_data: The CalcSpec object to encode.
+        inp_data: The ProgramInput object to encode.
         program: The program for which to encode the input.
 
     Returns:

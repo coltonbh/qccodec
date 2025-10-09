@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import pytest
-from qcio import CalcSpec, CalcType
+from qcio import CalcType, ProgramInput
 
 from qccodec.parsers.crest import (
     parse_conformers,
@@ -189,12 +189,12 @@ test_cases = [
 
 
 @pytest.mark.parametrize("test_case", test_cases, ids=lambda tc: tc.name)
-def test_crest_parsers(test_data_dir, spec_factory, tmp_path, test_case):
+def test_crest_parsers(test_data_dir, prog_input_factory, tmp_path, test_case):
     """
     Tests the crest parsers to ensure that they correctly parse the output files and
     behave correctly within the decode function.
     """
-    run_test_harness(test_data_dir, spec_factory, tmp_path, test_case)
+    run_test_harness(test_data_dir, prog_input_factory, tmp_path, test_case)
 
 
 ####################################################
@@ -202,30 +202,30 @@ def test_crest_parsers(test_data_dir, spec_factory, tmp_path, test_case):
 ####################################################
 
 
-def test_parse_conformers_charge_multiplicity_updates(test_data_dir, spec_factory):
+def test_parse_conformers_charge_multiplicity_updates(test_data_dir, prog_input_factory):
     # Change charge and multiplicity in prog_input
-    prog_input = spec_factory("conformer_search")
+    prog_input = prog_input_factory("conformer_search")
     prog_input_dict = prog_input.model_dump()
     prog_input_dict["structure"]["charge"] = -2
     prog_input_dict["structure"]["multiplicity"] = 3
     # Using fake prog_input for water; need .structure.charge and .multiplicity
     directory = test_data_dir / "crest"
-    data = parse_conformers(directory, None, CalcSpec(**prog_input_dict))
+    data = parse_conformers(directory, None, ProgramInput(**prog_input_dict))
     # Check conformer energies
     for struct in data["conformers"]:
         assert struct.charge == -2
         assert struct.multiplicity == 3
 
 
-def test_parse_rotamers_charge_multiplicity_updates(test_data_dir, spec_factory):
+def test_parse_rotamers_charge_multiplicity_updates(test_data_dir, prog_input_factory):
     # Change charge and multiplicity in prog_input
-    prog_input = spec_factory("conformer_search")
+    prog_input = prog_input_factory("conformer_search")
     prog_input_dict = prog_input.model_dump()
     prog_input_dict["structure"]["charge"] = 3
     prog_input_dict["structure"]["multiplicity"] = 5
     # Using fake prog_input for water; need .structure.charge and .multiplicity
     directory = test_data_dir / "crest"
-    data = parse_rotamers(directory, None, CalcSpec(**prog_input_dict))
+    data = parse_rotamers(directory, None, ProgramInput(**prog_input_dict))
     # Check conformer energies
     for struct in data["rotamers"]:
         assert struct.charge == 3

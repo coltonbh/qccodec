@@ -8,8 +8,8 @@ from typing import Any
 import numpy as np
 from qcconst import constants
 from qcio import (
-    CalcSpec,
     CalcType,
+    ProgramInput,
     Provenance,
     Results,
     SinglePointData,
@@ -91,7 +91,7 @@ def parse_version(string: str) -> str:
 
 @register(filetype=CrestFileType.DIRECTORY, calctypes=[CalcType.conformer_search])
 def parse_conformers(
-    directory: Path | str, stdout: str | None, input_data: CalcSpec
+    directory: Path | str, stdout: str | None, input_data: ProgramInput
 ) -> dict[str, Any]:
     """Parse the conformers from the output directory of a CREST conformer search calculation.
 
@@ -126,7 +126,7 @@ def parse_conformers(
 
 @register(filetype=CrestFileType.DIRECTORY, calctypes=[CalcType.conformer_search])
 def parse_rotamers(
-    directory: Path | str, stdout: str | None, input_data: CalcSpec
+    directory: Path | str, stdout: str | None, input_data: ProgramInput
 ) -> dict[str, Any]:
     """Parse the rotamers from the output directory of a CREST conformer search calculation.
 
@@ -160,7 +160,7 @@ def parse_rotamers(
 
 
 def _add_identifiers_to_structures(
-    structures: list[Structure], input_data: CalcSpec
+    structures: list[Structure], input_data: ProgramInput
 ) -> None:
     """Add identifiers to a list of Structure objects if the 'topo' is unchanged."""
     if input_data.keywords.get("topo", True):
@@ -312,7 +312,7 @@ def parse_g98_normal_modes(contents: str) -> list[list[list[float]]]:
 def parse_trajectory(
     directory: Path | str,
     stdout: str,
-    input_data: CalcSpec,
+    input_data: ProgramInput,
 ) -> list[Results]:
     """Parse the output directory of a CREST optimization calculation.
 
@@ -347,7 +347,7 @@ def parse_trajectory(
     # Create the optimization trajectory
     trajectory: list[Results] = [
         Results(
-            input_data=CalcSpec(
+            input_data=ProgramInput(
                 calctype=CalcType.gradient,
                 structure=struct,
                 model=input_data.model,

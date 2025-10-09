@@ -7,8 +7,8 @@ from pathlib import Path
 
 from qcconst import constants
 from qcio import (
-    CalcSpec,
     CalcType,
+    ProgramInput,
     Provenance,
     Results,
     SinglePointData,
@@ -197,7 +197,7 @@ def parse_nmo(contents: str) -> int:
 def parse_trajectory(
     directory: Path | str,
     stdout: str,
-    input_data: CalcSpec,
+    input_data: ProgramInput,
 ) -> list[Results]:
     """Parse the output directory of a TeraChem optimization calculation into a trajectory.
 
@@ -249,7 +249,7 @@ def parse_trajectory(
 
     for structure, grad_stdout in zip(structures, per_gradient_stdout):
         # Create input data object for each structure and gradient in the trajectory.
-        input_data_obj = CalcSpec(
+        input_data_obj = ProgramInput(
             calctype=CalcType.gradient,
             structure=structure,
             model=input_data.model,

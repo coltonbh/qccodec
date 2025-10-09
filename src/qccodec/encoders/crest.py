@@ -3,7 +3,7 @@ import os
 from typing import Any
 
 import tomli_w
-from qcio import CalcSpec, CalcType
+from qcio import CalcType, ProgramInput
 
 from qccodec.exceptions import EncoderError
 from qccodec.models import NativeInput
@@ -17,46 +17,49 @@ SUPPORTED_CALCTYPES = {
 }
 
 
-def encode(inp_obj: CalcSpec) -> NativeInput:
-    """Translate a CalcSpec into CREST inputs files.
+def encode(program_input: ProgramInput) -> NativeInput:
+    """Translate a ProgramInput into CREST input files.
 
     Args:
-        inp_obj: The qcio CalcSpec object for a computation.
+        program_input: The qcio ProgramInput object for a computation.
 
     Returns:
         NativeInput with .input_files being a crest.toml file and .geometry_file the
             Structure's xyz file.
     """
-    validate_input(inp_obj)
+    validate_input(program_input)
     struct_filename = "structure.xyz"
 
     return NativeInput(
-        input_file=tomli_w.dumps(_to_toml_dict(inp_obj, struct_filename)),
-        geometry_file=inp_obj.structure.to_xyz(),
+        input_file=tomli_w.dumps(_to_toml_dict(program_input, struct_filename)),
+        geometry_file=program_input.structure.to_xyz(),
         geometry_filename=struct_filename,
     )
 
 
-def validate_input(inp_obj: CalcSpec):
+def validate_input(program_input: ProgramInput):
     """Validate the input for CREST.
 
     Args:
-        inp_obj: The qcio CalcSpec object for a computation.
+        program_input: The qcio ProgramInput object for a computation.
 
     Raises:
         EncoderError: If the input is invalid.
     """
-    # These values come from other parts of the CalcSpec and should not be set
+    # These values come from other parts of the ProgramInput and should not be set
     # in the keywords.
     non_allowed_keywords = ["charge", "uhf"]
     for keyword in non_allowed_keywords:
-        if keyword in inp_obj.keywords:
+        if keyword in program_input.keywords:
             raise EncoderError(
                 f"{keyword} should not be set in keywords for CREST. It is already set "
-                "on the Structure or CalcSpec elsewhere.",
+                "on the Structure or ProgramInput elsewhere.",
             )
-    if "runtype" in inp_obj.keywords:
-        _validate_runtype_calctype(inp_obj.keywords["runtype"], inp_obj.calctype)
+    if "runtype" in program_input.keywords:
+        _validate_runtype_calctype(
+            program_input.keywords["runtype"],
+            program_input.calctype,
+        )
 
 
 def _validate_runtype_calctype(runtype: str, calctype: CalcType):
@@ -91,13 +94,13 @@ def _validate_runtype_calctype(runtype: str, calctype: CalcType):
         )
 
 
-def _to_toml_dict(inp_obj: CalcSpec, struct_filename: str) -> dict[str, Any]:
-    """Convert a CalcSpec object to a dictionary in the CREST format of TOML.
+def _to_toml_dict(program_input: ProgramInput, struct_filename: str) -> dict[str, Any]:
+    """Convert a ProgramInput object to a dictionary in the CREST format of TOML.
 
     This function makes it easier to test for the correct TOML structure.
     """
     # Start with existing keywords
-    toml_dict = copy.deepcopy(inp_obj.keywords)
+    toml_dict = copy.deepcopy(program_input.keywords)
 
     # Top level keywords
     # Logical cores was 10% faster than physical cores, so not using psutil
@@ -105,18 +108,18 @@ def _to_toml_dict(inp_obj: CalcSpec, struct_filename: str) -> dict[str, Any]:
     toml_dict["input"] = struct_filename
 
     # Set default runtype if not already set
-    if "runtype" not in inp_obj.keywords:
-        if inp_obj.calctype == CalcType.conformer_search:
+    if "runtype" not in program_input.keywords:
+        if program_input.calctype == CalcType.conformer_search:
             toml_dict["runtype"] = "imtd-gc"
-        elif inp_obj.calctype == CalcType.optimization:
+        elif program_input.calctype == CalcType.optimization:
             toml_dict["runtype"] = "optimize"
-        elif inp_obj.calctype in {CalcType.energy, CalcType.gradient}:
+        elif program_input.calctype in {CalcType.energy, CalcType.gradient}:
             toml_dict["runtype"] = "singlepoint"
-        elif inp_obj.calctype == CalcType.hessian:
+        elif program_input.calctype == CalcType.hessian:
             toml_dict["runtype"] = "numhess"
         else:
             raise EncoderError(
-                f"Unsupported calctype {inp_obj.calctype} for CREST encoder.",
+                f"Unsupported calctype {program_input.calctype} for CREST encoder.",
             )
 
     # Calculation level keywords
@@ -125,9 +128,9 @@ def _to_toml_dict(inp_obj: CalcSpec, struct_filename: str) -> dict[str, Any]:
     if len(calculation_level) == 0:
         calculation_level.append({})
     for level_dict in calculation_level:
-        level_dict["method"] = inp_obj.model.method
-        level_dict["charge"] = inp_obj.structure.charge
-        level_dict["uhf"] = inp_obj.structure.multiplicity - 1
+        level_dict["method"] = program_input.model.method
+        level_dict["charge"] = program_input.structure.charge
+        level_dict["uhf"] = program_input.structure.multiplicity - 1
 
     calculation["level"] = calculation_level
     toml_dict["calculation"] = calculation

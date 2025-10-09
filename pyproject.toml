@@ -9,7 +9,7 @@ license = { file = "LICENSE" }
 dependencies = [
     "tomli-w>=1.0.0",
     "qcconst>=0.2.1",
-    "qcio>=0.15.0",
+    "qcio>=0.16.0",
 ]
 
 classifiers = [
