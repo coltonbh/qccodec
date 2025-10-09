@@ -1,5 +1,5 @@
 import pytest
-from qcio import CalcSpec, CalcType, Model
+from qcio import CalcType, Model, ProgramInput
 from qcio.utils import water
 
 from qccodec.encoders.orca import _validate_keywords, encode
@@ -61,13 +61,13 @@ def test_write_input_files(
     calctype: CalcType, method: str, basis: str, keywords: dict[str, object]
 ):
     """Test write_input_files method."""
-    inp_obj = CalcSpec(
+    program_input = ProgramInput(
         calctype=calctype,
         model=Model(method=method, basis=basis),
         structure=water,
         keywords=keywords,
     )
-    native_input = encode(inp_obj)
+    native_input = encode(program_input)
     input_file = native_input.input_file
 
     # Check that all defined main / block keywords ended up in the file

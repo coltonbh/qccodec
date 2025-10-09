@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from qcio import CalcSpec, CalcType, Results
+from qcio import CalcType, ProgramInput, Results
 
 # Load trajectory.json answer
 traj_path = Path(__file__).parent / "trajectory.json"
@@ -21,18 +21,18 @@ ch3_trajectory: list[Results] = [Results(**item) for item in ch3_traj_json]
 
 def _build_optimization_spec(
     results: list[Results], charge: int = 0, multiplicity: int = 1
-) -> CalcSpec:
+) -> ProgramInput:
     """
-    Construct an optimization CalcSpec that matches the provided trajectory answers.
+    Construct an optimization ProgramInput that matches the provided trajectory answers.
 
-    Returns a fresh CalcSpec so tests can mutate copies without touching the stored data.
+    Returns a fresh ProgramInput so tests can mutate copies without touching the stored data.
     """
     first_entry = results[0]
     spec_dict = first_entry.input_data.model_dump()
     spec_dict["calctype"] = CalcType.optimization
-    return CalcSpec(**spec_dict)
+    return ProgramInput(**spec_dict)
 
 
-trajectory_spec: CalcSpec = _build_optimization_spec(trajectory)
-es_trajectory_spec: CalcSpec = _build_optimization_spec(es_trajectory)
-ch3_trajectory_spec: CalcSpec = _build_optimization_spec(ch3_trajectory, charge=1)
+trajectory_spec: ProgramInput = _build_optimization_spec(trajectory)
+es_trajectory_spec: ProgramInput = _build_optimization_spec(es_trajectory)
+ch3_trajectory_spec: ProgramInput = _build_optimization_spec(ch3_trajectory, charge=1)

@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from qcio import CalcSpec, CalcType
+from qcio import CalcType, ProgramInput
 from qcio.utils import water
 
 from qccodec.codec import decode
@@ -47,19 +47,18 @@ def crest_file(test_data_dir):
 
 
 @pytest.fixture(scope="session")
-def spec_factory():
-    """Create a function that returns a CalcSpec object with a specified
-    calculation type."""
+def prog_input_factory():
+    """Create a function that returns a ProgramInput object with a specified calculation type."""
 
-    def create_spec(calctype):
-        return CalcSpec(
+    def create_input(calctype):
+        return ProgramInput(
             structure=water,
             calctype=calctype,
             # Tests depend up this model; do not change
             model={"method": "hf", "basis": "sto-3g"},
         )
 
-    return create_spec
+    return create_input
 
 
 @dataclass
@@ -83,7 +82,7 @@ class ParserTestCase:
         extra_files_names: Optional list of names for the extra files, these names will
             be used as the filenames in the test directory. If not provided, the
             filenames will be the same as in the extra_files list.
-        calc_spec: Optional CalcSpec to be used instead of the default one created
+        program_input: Optional ProgramInput to be used instead of the default one created
             from the calctype.
 
     """
@@ -99,7 +98,7 @@ class ParserTestCase:
     clear_registry: bool = True
     extra_files: list[str] | None = None
     extra_files_names: list[str] | None = None
-    calc_spec: CalcSpec | None = None
+    program_input: ProgramInput | None = None
 
 
 def _load_contents(directory, contents):
@@ -125,14 +124,14 @@ def get_target_value(results, target):
     return d.get(keys[-1], None)
 
 
-def _test_parser_direct(tc, contents, directory, spec, parser_spec):
+def _test_parser_direct(tc, contents, directory, proginp, parser_spec):
     """Test the parser function directly with the provided contents.
 
     Args:
         tc: The TestCase object containing the test parameters.
         contents: The contents to be parsed.
         directory: The directory containing the test data files.
-        spec: The CalcSpec to provide to directory parsers.
+        proginp: The ProgramInput to provide to directory parsers.
         parser_spec: The specification of the parser being tested.
     """
     if tc.success:
@@ -141,7 +140,7 @@ def _test_parser_direct(tc, contents, directory, spec, parser_spec):
             parsed = tc.parser(
                 directory,
                 contents if tc.contents_stdout else None,
-                spec,
+                proginp,
             )
         else:
             # Successful execution of file parser
@@ -157,14 +156,14 @@ def _test_parser_direct(tc, contents, directory, spec, parser_spec):
                 tc.parser(
                     directory,
                     contents if tc.contents_stdout else None,
-                    spec,
+                    proginp,
                 )
             else:
                 # Expect an exception for file parser
                 tc.parser(contents)
 
 
-def _test_decode_integration(tc, contents, directory, spec, program, parser_spec):
+def _test_decode_integration(tc, contents, directory, proginp, program, parser_spec):
     """
     Test the decode() integration, using only the parser under test (unless tc.clear_registry is False).
 
@@ -172,7 +171,7 @@ def _test_decode_integration(tc, contents, directory, spec, program, parser_spec
         tc: The TestCase object containing the test parameters.
         contents: The contents to be parsed (needed if tc.contents_stdout is True).
         directory: The directory containing the test data files.
-        spec: The CalcSpec to provide to decode().
+        proginp: The ProgramInput to provide to decode().
         program: The name of the program being tested.
         parser_spec: The specification of the parser being tested.
 
@@ -193,7 +192,7 @@ def _test_decode_integration(tc, contents, directory, spec, program, parser_spec
             tc.calctype,
             stdout=(contents if tc.contents_stdout else None),
             directory=directory,
-            input_data=spec,
+            input_data=proginp,
             as_dict=True,
         )
         if parser_spec.target is not None:
@@ -214,7 +213,7 @@ def _test_decode_integration(tc, contents, directory, spec, program, parser_spec
                     tc.calctype,
                     stdout=(contents if tc.contents_stdout else None),
                     directory=directory,
-                    input_data=spec,
+                    input_data=proginp,
                 )
         else:
             # Failed execution and required is False
@@ -223,7 +222,7 @@ def _test_decode_integration(tc, contents, directory, spec, program, parser_spec
                 tc.calctype,
                 stdout=(contents if tc.contents_stdout else None),
                 directory=directory,
-                input_data=spec,
+                input_data=proginp,
                 as_dict=True,
             )
             final_value = get_target_value(result, parser_spec.target)
@@ -242,11 +241,11 @@ def restore_registry(program: str):
         registry.registry[program] = original
 
 
-def run_test_harness(test_data_dir, spec_factory, tmp_path, tc):
+def run_test_harness(test_data_dir, input_factory, tmp_path, tc):
     """
     Args:
         test_data_dir: The base directory containing test data files.
-        spec_factory: A function that creates a CalcSpec given a CalcType.
+        input_factory: A function that creates a ProgramInput given a CalcType.
         tmp_path: A temporary directory Path for the test.
         tc: The ParserTestCase object containing the test parameters.
 
@@ -262,7 +261,7 @@ def run_test_harness(test_data_dir, spec_factory, tmp_path, tc):
     # Get the spec for the parser under test.
     parser_spec = registry.get_spec(tc.parser)
 
-    spec = tc.calc_spec or spec_factory(tc.calctype)
+    proginput = tc.program_input or input_factory(tc.calctype)
 
     # Copy over extra files if provided.
     if tc.extra_files:
@@ -287,7 +286,7 @@ def run_test_harness(test_data_dir, spec_factory, tmp_path, tc):
         filepath.write_text(contents)
 
     # Test the parser directly.
-    _test_parser_direct(tc, contents, tmp_path, spec, parser_spec)
+    _test_parser_direct(tc, contents, tmp_path, proginput, parser_spec)
 
     # Now test integration via decode() with a restricted registry.
     with restore_registry(program):
@@ -295,4 +294,4 @@ def run_test_harness(test_data_dir, spec_factory, tmp_path, tc):
             # Clear the registry of all other parsers for this program.
             registry.registry.pop(program)
             registry.registry[program] = [parser_spec]
-        _test_decode_integration(tc, contents, tmp_path, spec, program, parser_spec)
+        _test_decode_integration(tc, contents, tmp_path, proginput, program, parser_spec)

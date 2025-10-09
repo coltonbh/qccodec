@@ -1,7 +1,7 @@
 from collections.abc import Mapping
 from typing import Any
 
-from qcio import CalcSpec, CalcType
+from qcio import CalcType, ProgramInput
 
 from qccodec.exceptions import EncoderError
 from qccodec.models import NativeInput
@@ -57,18 +57,18 @@ def _fmt(key: str, value: Any) -> Any:
     return value
 
 
-def encode(inp_obj: CalcSpec) -> NativeInput:
-    """Translate a CalcSpec into ORCA input files.
+def encode(program_input: ProgramInput) -> NativeInput:
+    """Translate a ProgramInput into ORCA input files.
 
     Args:
-        inp_obj: The qcio CalcSpec object for a computation.
+        program_input: The qcio ProgramInput object for a computation.
 
     Returns:
         NativeInput with .input being an orca.inp file and .geometry an xyz file.
 
     Notes:
         - ORCA keywords are case-insensitive. This encoder will preserve the
-            casing of keywords as provided in inp_obj.keywords.
+            casing of keywords as provided in program_input.keywords.
         - ORCA requires passing `numgrad` for numerical gradients. To activate a
             numerical gradient for a single point or optimization pass
             `{"numgrad": "true"} in the keywords or `{"numgrad": {...}}` with a
@@ -77,7 +77,7 @@ def encode(inp_obj: CalcSpec) -> NativeInput:
     """
 
     # Handle ORCA's case-insensitive keywords by doing caseless lookups
-    kw_lower = {k.casefold(): v for k, v in inp_obj.keywords.items()}
+    kw_lower = {k.casefold(): v for k, v in program_input.keywords.items()}
     _validate_keywords(kw_lower)
 
     # Collect lines for input file
@@ -96,25 +96,25 @@ def encode(inp_obj: CalcSpec) -> NativeInput:
         inp_lines.append("")
 
     # Method and Basis
-    inp_lines.append(f"! {inp_obj.model.method} {inp_obj.model.basis}")
+    inp_lines.append(f"! {program_input.model.method} {program_input.model.basis}")
 
     # NumGrad. May be used for gradients or optimizations
     if "numgrad" in kw_lower:
         inp_lines.append(f"! numgrad")
 
     # Set ORCA runtyp based on calctype
-    if inp_obj.calctype == CalcType.energy:
+    if program_input.calctype == CalcType.energy:
         runtyp = "energy"
-    elif inp_obj.calctype == CalcType.gradient:
+    elif program_input.calctype == CalcType.gradient:
         runtyp = "engrad"
-    elif inp_obj.calctype == CalcType.hessian:
+    elif program_input.calctype == CalcType.hessian:
         if "numfreq" in kw_lower:
             runtyp = "numfreq"
         else:
             runtyp = "freq"
-    elif inp_obj.calctype == CalcType.optimization:
+    elif program_input.calctype == CalcType.optimization:
         runtyp = "opt"
-    elif inp_obj.calctype == CalcType.transition_state:
+    elif program_input.calctype == CalcType.transition_state:
         runtyp = "optts"
 
     inp_lines.append(f"! {runtyp}\n")
@@ -133,11 +133,11 @@ def encode(inp_obj: CalcSpec) -> NativeInput:
 
     # Structure
     inp_lines.append(
-        f"* xyzfile {inp_obj.structure.charge} {inp_obj.structure.multiplicity} {XYZ_FILENAME}"
+        f"* xyzfile {program_input.structure.charge} {program_input.structure.multiplicity} {XYZ_FILENAME}"
     )
 
     return NativeInput(
         input_file="\n".join(inp_lines) + "\n",
-        geometry_file=inp_obj.structure.to_xyz(),
+        geometry_file=program_input.structure.to_xyz(),
         geometry_filename=XYZ_FILENAME,
     )

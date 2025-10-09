@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Changed
+
+- Updated to `qcio` 0.16.0 which reverts input data structure names.
+
 ## [0.8.1] - 2025-10-07
 
 ### Fixed
