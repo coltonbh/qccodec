@@ -35,10 +35,10 @@ A library for parsing Quantum Chemistry output files into structured data object
   from qccodec import decode
 
   stdout = Path("tc.out").read_text()
-  results = decode("terachem", CalcType.gradient, stdout=stdout)
+  data = decode("terachem", CalcType.gradient, stdout=stdout)
   ```
 
-- The `results` object will be a `qcio` object, either `SinglePointResults`, `OptimizationResults`, or `ConformerSearchResults` depending on the `calctype`. Run `dir(results)` inside a Python interpreter to see the various values you can access. A few prominent values are shown here as an example:
+- The `data` object will be a `qcio` object, either `SinglePointData`, `OptimizationData`, `ConformerSearchData` or other `*Data` structure depending on the `calctype`. Run `dir(data)` inside a Python interpreter to see the various values you can access. A few prominent values are shown here as an example:
 
   ```python
   from pathlib import Path
@@ -46,27 +46,27 @@ A library for parsing Quantum Chemistry output files into structured data object
   from qccodec import decode
 
   stdout = Path("tc.out").read_text()
-  results = decode("terachem", CalcType.hessian, stdout=stdout)
+  data = decode("terachem", CalcType.hessian, stdout=stdout)
 
-  results.energy
-  results.gradient # If a gradient calc
-  results.hessian # If a hessian calc
-  results.calcinfo_nmo # Number of molecular orbitals
+  data.energy
+  data.gradient # If a gradient calc
+  data.hessian # If a hessian calc
+  data.calcinfo_nmo # Number of molecular orbitals
   ```
 
 - Parsed values can be written to disk like this:
 
   ```py
-  with open("results.json", "w") as f:
-      f.write(result.model_dumps_json())
+  with open("data.json", "w") as f:
+      f.write(data.model_dumps_json())
   ```
 
 - And read from disk like this:
 
   ```py
-  from qcio import SinglePointResults
+  from qcio import SinglePointData
 
-  results = SinglePointResults.open("results.json")
+  data = SinglePointData.open("data.json")
   ```
 
 - You can also run `qccodec` from the command line like this:
@@ -74,7 +74,7 @@ A library for parsing Quantum Chemistry output files into structured data object
   ```sh
   qccodec -h # Get help message for cli
 
-  qccodec terachem hessian tests/data/terachem/water.frequencies.out > results.json # Parse TeraChem stdout to json
+  qccodec terachem hessian tests/data/terachem/water.frequencies.out > data.json # Parse TeraChem stdout to json
   ```
 
 - More complex parsing can be accomplished by passing the directory containing the scratch files to `decode` and optionally the input data used to generate the calculation (usually done from `qcop` which uses structure data):
@@ -88,7 +88,7 @@ A library for parsing Quantum Chemistry output files into structured data object
   directory = Path(".") / "scr.geom"
   input_data = ProgramInput.open("prog_inp.json")
 
-  results = decode("terachem", CalcType.hessian, stdout=stdout, directory=directory, input_data=input_data)
+  data = decode("terachem", CalcType.hessian, stdout=stdout, directory=directory, input_data=input_data)
   ```
 
 ## 💻 Contributing

@@ -1,7 +1,7 @@
 """All parsers should follow a basic pattern:
 
 1. Extract the parsed data, cast to its appropriate Python type, set it on the
-    SinglePointResults object at the appropriate attribute name.
+    SinglePointData object at the appropriate attribute name.
 2. Raise a MatchNotFound error if a match was not found
 3. Register parser with the registry by decorating it with the parser() decorator
 

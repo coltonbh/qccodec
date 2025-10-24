@@ -1,8 +1,8 @@
-from qcio import ProgramOutput
+from typing import Any
 
-optimization: list[ProgramOutput] = [
-    ProgramOutput(**val)
-    for val in [
+from qcio import Results
+
+optimization_dicts: list[dict[str, Any]] = [
         {
             "input_data": {
                 "structure": {
@@ -25,7 +25,7 @@ optimization: list[ProgramOutput] = [
                 "calctype": "gradient",
             },
             "success": True,
-            "results": {
+            "data": {
                 "energy": -4.7918798035,
                 "gradient": [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]],
             },
@@ -53,7 +53,7 @@ optimization: list[ProgramOutput] = [
                 "calctype": "gradient",
             },
             "success": True,
-            "results": {
+            "data": {
                 "energy": -4.9229264187,
                 "gradient": [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]],
             },
@@ -77,7 +77,7 @@ optimization: list[ProgramOutput] = [
                 "calctype": "gradient",
             },
             "success": True,
-            "results": {
+            "data": {
                 "energy": -5.0483521241,
                 "gradient": [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]],
             },
@@ -105,7 +105,7 @@ optimization: list[ProgramOutput] = [
                 "calctype": "gradient",
             },
             "success": True,
-            "results": {
+            "data": {
                 "energy": -5.017059761,
                 "gradient": [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]],
             },
@@ -133,7 +133,7 @@ optimization: list[ProgramOutput] = [
                 "calctype": "gradient",
             },
             "success": True,
-            "results": {
+            "data": {
                 "energy": -5.0491088307,
                 "gradient": [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]],
             },
@@ -157,7 +157,7 @@ optimization: list[ProgramOutput] = [
                 "calctype": "gradient",
             },
             "success": True,
-            "results": {
+            "data": {
                 "energy": -5.0660326493,
                 "gradient": [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]],
             },
@@ -181,7 +181,7 @@ optimization: list[ProgramOutput] = [
                 "calctype": "gradient",
             },
             "success": True,
-            "results": {
+            "data": {
                 "energy": -5.0730217268,
                 "gradient": [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]],
             },
@@ -205,7 +205,7 @@ optimization: list[ProgramOutput] = [
                 "calctype": "gradient",
             },
             "success": True,
-            "results": {
+            "data": {
                 "energy": -5.072307888,
                 "gradient": [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]],
             },
@@ -233,7 +233,7 @@ optimization: list[ProgramOutput] = [
                 "calctype": "gradient",
             },
             "success": True,
-            "results": {
+            "data": {
                 "energy": -5.0683269168,
                 "gradient": [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]],
             },
@@ -261,7 +261,7 @@ optimization: list[ProgramOutput] = [
                 "calctype": "gradient",
             },
             "success": True,
-            "results": {
+            "data": {
                 "energy": -5.0732163707,
                 "gradient": [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]],
             },
@@ -289,7 +289,7 @@ optimization: list[ProgramOutput] = [
                 "calctype": "gradient",
             },
             "success": True,
-            "results": {
+            "data": {
                 "energy": -5.0733841586,
                 "gradient": [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]],
             },
@@ -313,7 +313,7 @@ optimization: list[ProgramOutput] = [
                 "calctype": "gradient",
             },
             "success": True,
-            "results": {
+            "data": {
                 "energy": -5.0734021646,
                 "gradient": [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]],
             },
@@ -341,7 +341,7 @@ optimization: list[ProgramOutput] = [
                 "calctype": "gradient",
             },
             "success": True,
-            "results": {
+            "data": {
                 "energy": -5.0734025156,
                 "gradient": [
                     [-0.005962071557911, -0.004419818102026, 0.003139227894649],
@@ -352,4 +352,5 @@ optimization: list[ProgramOutput] = [
             "provenance": {"program": "crest", "program_version": "3.0.2"},
         },
     ]
-]
+
+optimization: list[Results] = [Results(**val) for val in optimization_dicts]

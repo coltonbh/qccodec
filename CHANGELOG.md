@@ -6,10 +6,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.9.0] - 2025-10-09
+
 ### Changed
 
+- Updated to `qcio` 0.16.0 which reverts input data structure names.
+
+## [0.8.1] - 2025-10-07
+
+### Fixed
+
+- Correctly propagate `Structure` charge and multiplicity through TeraChem optimization trajectory parsing.
+
+## [0.8.0] - 2025-10-06
+
+### Removed
+
+- 🚨Python 3.9 support. Minimum supported version is now 3.10. [#37](https://github.com/coltonbh/qccodec/pull/37).
+
+### Changed
+
+- 🚨 Updated to `qcio>=0.15.0` which incorporates new `qcio` nomenclature. [#37](https://github.com/coltonbh/qccodec/pull/37)
 - Changed TeraChem encoder `Enum` lookups to compare `Enums` directly instead of string value.
 - Updated `prog_inp` pytest fixture to have no keywords so that it can be reused in other outside of TeraChem.
+
+### Added
+
+- Test matrix that runs off a "pip" installed version of `qccodec`.
 
 ## [0.7.8] - 2025-07-07
 
@@ -224,7 +247,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Can return either `AtomicResult` or `FailedOperation` objects depending on whether calculation succeeded or failed.
 - Tests for all parsers and the main `parse` function.
 
-[unreleased]: https://github.com/coltonbh/qccodec/compare/0.7.8...HEAD
+[unreleased]: https://github.com/coltonbh/qccodec/compare/0.9.0...HEAD
+[0.9.0]: https://github.com/coltonbh/qccodec/releases/tag/0.9.0
+[0.8.1]: https://github.com/coltonbh/qccodec/releases/tag/0.8.1
+[0.8.0]: https://github.com/coltonbh/qccodec/releases/tag/0.8.0
 [0.7.8]: https://github.com/coltonbh/qccodec/releases/tag/0.7.8
 [0.7.7]: https://github.com/coltonbh/qccodec/releases/tag/0.7.7
 [0.7.6]: https://github.com/coltonbh/qccodec/releases/tag/0.7.6

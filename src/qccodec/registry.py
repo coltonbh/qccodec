@@ -1,8 +1,8 @@
 import inspect
 from collections import defaultdict
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Callable, Optional, Union
 
 from qcio import CalcType
 
@@ -34,7 +34,7 @@ class ParserSpec:
     required: bool
     calctypes: list[CalcType]
     program: str
-    target: Optional[Union[str, tuple[str, ...]]] = None
+    target: str | tuple[str, ...] | None = None
 
     def __post_init__(self):
         """Ensure that the parser function is Callable and that target exists unless filetype is directory."""
@@ -87,8 +87,8 @@ class ParserRegistry:
     def get_parsers(
         self,
         program: str,
-        filetype: Optional[Enum] = None,
-        calctype: Optional[CalcType] = None,
+        filetype: Enum | None = None,
+        calctype: CalcType | None = None,
     ) -> list[ParserSpec]:
         """Get all parser functions for a given program.
 
@@ -156,9 +156,9 @@ registry = ParserRegistry()
 def register(
     *,
     filetype: Enum,
-    calctypes: Optional[list[CalcType]] = None,
+    calctypes: list[CalcType] | None = None,
     required: bool = True,
-    target: Optional[Union[str, tuple[str, ...]]] = None,
+    target: str | tuple[str, ...] | None = None,
 ):
     """Decorator to register a function in the parser registry.
 
