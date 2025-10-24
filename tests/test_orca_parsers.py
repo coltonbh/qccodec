@@ -120,7 +120,7 @@ test_cases = [
 
 
 @pytest.mark.parametrize("test_case", test_cases, ids=lambda tc: tc.name)
-def test_orca_parsers(test_data_dir, prog_inp, tmp_path, test_case):
+def test_orca_parsers(test_data_dir, prog_input_factory, tmp_path, test_case):
     """
     Tests the orca parsers to ensure that they correctly parse the output files and
     behave correctly within the decode function.
@@ -133,4 +133,4 @@ def test_orca_parsers(test_data_dir, prog_inp, tmp_path, test_case):
             po_dict["provenance"]["scratch_dir"] = tmp_path
             test_case.answer[i] = ProgramOutput(**po_dict)
 
-    run_test_harness(test_data_dir, prog_inp, tmp_path, test_case)
+    run_test_harness(test_data_dir, prog_input_factory, tmp_path, test_case)
