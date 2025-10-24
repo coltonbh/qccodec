@@ -6,20 +6,19 @@ from enum import Enum
 from pathlib import Path
 from typing import Generator, Optional, Union
 
-import numpy as np
 from qcio import (
     CalcType,
     ProgramInput,
-    ProgramOutput,
     Provenance,
-    SinglePointResults,
+    Results,
+    SinglePointData,
     Structure,
 )
 
-from qccodec.exceptions import ParserError
+from qccodec.exceptions import MatchNotFoundError, ParserError
 
 from ..registry import register
-from .utils import re_finditer, re_search
+from .utils import re_search
 
 
 class OrcaFileType(str, Enum):
@@ -104,36 +103,23 @@ def parse_gradient(contents: str) -> list[list[float]]:
     Raises:
         MatchNotFoundError: If no gradient data is found.
     """
-    gradients = parse_gradients(contents)
-    return gradients[-1]
-
-
-def parse_gradients(contents: str) -> list[list[list[float]]]:
-    """Parse all gradients from Orca stdout.
-
-    Returns:
-        The gradient as a list of 3-element lists.
-
-    Raises:
-        MatchNotFoundError: If no gradient data is found.
-    """
     # Extract the gradient block lines
     header_regex = r"CARTESIAN GRADIENT.*?(?=\d)"  # non-greedy lookahead to first digit
-    header_matches = re_finditer(header_regex, contents, flags=re.DOTALL)
+    header_match = re_search(header_regex, contents, flags=re.DOTALL)
 
-    gradients = []
-    for header_match in header_matches:
-        block_start = header_match.end()
-        block_lines = itertools.takewhile(
-            lambda line: re.search(r"\d\s*$", line), contents[block_start:].splitlines()
-        )
+    if not header_match:
+        raise MatchNotFoundError(regex=header_regex, contents=contents)
 
-        # Parse values from block lines
-        line_regex = r".*:\s*(-?\d+\.\d+)\s+(-?\d+\.\d+)\s+(-?\d+\.\d+)"
-        line_matches = [re_search(line_regex, line) for line in block_lines]
-        gradients.append([list(map(float, match.groups())) for match in line_matches])
+    block_start = header_match.end()
+    block_lines = itertools.takewhile(
+        lambda line: re.search(r"\d\s*$", line), contents[block_start:].splitlines()
+    )
 
-    return gradients
+    # Parse values from block lines
+    line_regex = r".*:\s*(-?\d+\.\d+)\s+(-?\d+\.\d+)\s+(-?\d+\.\d+)"
+    line_matches = [re_search(line_regex, line) for line in block_lines]
+    gradient = [list(map(float, match.groups())) for match in line_matches]
+    return gradient
 
 
 @register(
@@ -153,8 +139,7 @@ def parse_hessian(contents: str) -> list[list[float]]:
         A square Hessian matrix as a list of lists of floats.
 
     Raises:
-        MatchNotFoundError: If no Hessian data is found.
-        ParserError: If the extracted numbers cannot form a proper square matrix.
+        ParserError: If unable to find or parse the Hessian block.
     """
     # Find hessian entry in basename.hess file
     entry = next(
@@ -198,12 +183,12 @@ def parse_trajectory(
     directory: Union[Path, str],
     stdout: str,
     input_data: ProgramInput,
-) -> list[ProgramOutput]:
+) -> list[Results]:
     """Parse the output directory of a Orca optimization calculation into a trajectory.
 
     Args:
-        directory: Path to the directory containing the TeraChem output files.
-        stdout: The contents of the TeraChem stdout file.
+        directory: Path to the directory containing the Orca output files.
+        stdout: The contents of the Orca stdout file.
         input_data: The input object used for the calculation.
 
     Returns:
@@ -218,36 +203,59 @@ def parse_trajectory(
 
     # Parse the structures, energies, and gradients
     structures = Structure.open_multi(file)
-    energies = [
-        float(struct.extras[Structure._xyz_comment_key][-1]) for struct in structures
-    ]
-    gradients = list(map(np.array, parse_gradients(stdout)))
 
-    # No gradient gets calculated after the last step, so use a fake gradient for the last step
-    fake_gradient = np.zeros_like(gradients[0])
-    if len(gradients) == len(structures) - 1:
-        gradients.append(fake_gradient)
+    # Capture initialization stdout
+    regex = r"^(.*?\*\*\*\*END\s+OF\s+INPUT\*\*\*\*\s*\n\s*=*)"
+    match = re_search(regex, stdout, flags=re.MULTILINE | re.VERBOSE | re.DOTALL)
+    if not match:
+        raise MatchNotFoundError(regex, stdout)
+    initialization_stdout = match.group(1)
 
-    # Parse program version
-    program_version = parse_version(stdout)
+    # Capture the stdout for each gradient calculation
+    regex = (
+        r"GEOMETRY\s*OPTIMIZATION\s*CYCLE\s*\d+\s*\*\s*\n\s*\**\s*\n"  # header
+        r"(.*?)"  # body
+        r"-*\s*\n\s*ORCA\s+GEOMETRY\s+RELAXATION\s+STEP"
+    )
+    per_gradient_stdout = re.findall(regex, stdout, flags=re.DOTALL)
+    if not per_gradient_stdout:
+        raise MatchNotFoundError(regex, stdout)
 
-    # Create the optimization trajectory
-    trajectory: list[ProgramOutput] = [
-        ProgramOutput(
-            input_data=ProgramInput(
-                calctype=CalcType.gradient,
-                structure=struct,
-                model=input_data.model,
-            ),
-            success=True,
-            results=SinglePointResults(energy=energy, gradient=gradient),
-            provenance=Provenance(
-                program="orca",
-                program_version=program_version,
-            ),
+    # Parse the gradient values from the stdout file
+    from qccodec import decode
+
+    # Create the trajectory
+    trajectory: list[Results] = []
+
+    for structure, grad_stdout in zip(structures, per_gradient_stdout):
+        # Create input data object for each structure and gradient in the trajectory.
+        input_data_obj = ProgramInput(
+            calctype=CalcType.gradient,
+            structure=structure,
+            model=input_data.model,
+            keywords=input_data.keywords,
         )
-        for struct, energy, gradient in zip(structures, energies, gradients)
-    ]
+        # Create the results object for each structure and gradient in the trajectory.
+        full_grad_stdout = initialization_stdout + grad_stdout
+        parsed_results = decode("orca", CalcType.gradient, stdout=full_grad_stdout)
+        assert isinstance(parsed_results, SinglePointData)  # for mypy
+
+        spr_data = parsed_results.model_dump()
+        spr_data["energy"] = structure.extras[Structure._xyz_comment_key][-1]
+        results_obj = SinglePointData(**spr_data)
+        # Create the provenance object for each structure and gradient in the trajectory.
+        prov = Provenance(
+            program="orca",
+            program_version=parsed_results.extras["program_version"],
+        )
+        # Create the Results object for each structure and gradient in the trajectory.
+        traj_entry: Results = Results(
+            input_data=input_data_obj,
+            success=True,
+            data=results_obj,
+            provenance=prov,
+        )
+        trajectory.append(traj_entry)
 
     return trajectory
 
