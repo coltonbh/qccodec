@@ -1,18 +1,19 @@
 from pathlib import Path
 
 import pytest
-from qcio import CalcType, ProgramOutput
+from qcio import CalcType
 
 from qccodec.parsers.orca import (
     parse_energy,
     parse_gradient,
     parse_hessian,
     parse_natoms,
+    parse_trajectory,
     parse_version,
 )
 
 from .conftest import ParserTestCase, run_test_harness
-from .data.orca.answers import gradients, hessians
+from .data.orca.answers import gradients, hessians, trajectories
 
 ######################################################
 ##### Top level tests for all registered parsers #####
@@ -103,19 +104,17 @@ test_cases = [
         success=True,
         answer=3,
     ),
-    # # AVC: Attempted, but not clear how to set up the answer for this test
-    # # (I did a JSON dump, but the comparison fails)
-    # ParserTestCase(
-    #     name="Parse trajectory",
-    #     parser=parse_trajectory,
-    #     contents=Path("water.opt.out"),
-    #     contents_stdout=True,
-    #     calctype=CalcType.optimization,
-    #     success=True,
-    #     answer=trajectories.trajectory,
-    #     clear_registry=False,
-    #     extra_files=["water.opt_trj.xyz"],
-    # ),
+    ParserTestCase(
+        name="Parse trajectory",
+        parser=parse_trajectory,
+        contents=Path("water.opt.out"),
+        contents_stdout=True,
+        calctype=CalcType.optimization,
+        success=True,
+        answer=trajectories.trajectory,
+        clear_registry=False,
+        extra_files=["water.opt_trj.xyz"],
+    ),
 ]
 
 
@@ -125,12 +124,4 @@ def test_orca_parsers(test_data_dir, prog_input_factory, tmp_path, test_case):
     Tests the orca parsers to ensure that they correctly parse the output files and
     behave correctly within the decode function.
     """
-    # Water and excited state successful trajectories
-    if test_case.success and "Parse trajectory" in test_case.name:
-        # Update scratch_dir to the tmp_path for the trajectory test case
-        for i in range(len(test_case.answer)):
-            po_dict = test_case.answer[i].model_dump()
-            po_dict["provenance"]["scratch_dir"] = tmp_path
-            test_case.answer[i] = ProgramOutput(**po_dict)
-
     run_test_harness(test_data_dir, prog_input_factory, tmp_path, test_case)
