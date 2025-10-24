@@ -23,10 +23,15 @@ from .utils import re_finditer, re_search
 
 
 class OrcaFileType(str, Enum):
-    """Orca filetypes."""
+    """Orca filetypes.
+
+    Maps file types to their suffixes as written in the Orca output directory
+    (except for STDOUT and DIRECTORY).
+    """
 
     STDOUT = "stdout"
     DIRECTORY = "directory"
+    HESS = ".hess"  # basename.hess
 
 
 def iter_files(
@@ -58,6 +63,20 @@ def iter_files(
                 f"Directory {directory} does not exist or is not a directory."
             )
         yield OrcaFileType.DIRECTORY, directory
+
+        # Read the basename from STDOUT
+        if stdout is not None:
+            basename = parse_basename(stdout)
+
+            # Iterate over the files in the directory and yield their contents
+            for filetype in OrcaFileType:
+                # Ignore STDOUT and DIRECTORY as they are handled above
+                if filetype not in (OrcaFileType.STDOUT, OrcaFileType.DIRECTORY):
+                    # Get suffix from FileType value
+                    file_suffix = filetype.value
+                    file_path = directory / f"{basename}{file_suffix}"
+                    if file_path.exists():
+                        yield filetype, file_path.read_text()
 
 
 @register(
@@ -118,15 +137,11 @@ def parse_gradients(contents: str) -> list[list[list[float]]]:
 
 
 @register(
-    filetype=OrcaFileType.DIRECTORY,
+    filetype=OrcaFileType.HESS,
     calctypes=[CalcType.hessian],
     target="hessian",
 )
-def parse_hessian(
-    directory: Union[Path, str],
-    stdout: str,
-    input_data: ProgramInput,
-) -> list[list[float]]:
+def parse_hessian(contents: str) -> list[list[float]]:
     """Parse the output directory of a Orca optimization calculation into a trajectory.
 
     Args:
@@ -141,20 +156,13 @@ def parse_hessian(
         MatchNotFoundError: If no Hessian data is found.
         ParserError: If the extracted numbers cannot form a proper square matrix.
     """
-    basename = parse_basename(stdout)
-    directory = Path(directory)
-    file = directory / f"{basename}.hess"
-    if not file.exists():
-        msg = f"Hessian file does not exist: {file}"
-        raise ParserError(msg)
-
     # Find hessian entry in basename.hess file
     entry = next(
-        (block for block in file.read_text().split("$") if block.startswith("hess")),
+        (block for block in contents.split("$") if block.startswith("hess")),
         None,
     )
     if entry is None:
-        msg = f"Failed to find hessian block in {file}"
+        msg = "Failed to find hessian block in Hessian file."
         raise ParserError(msg)
 
     dim = int(entry.splitlines()[1])
