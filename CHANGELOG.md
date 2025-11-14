@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.9.1] - 2025-11-14
+
 ### Added
 
 - Parsers and encoders for ORCA (by [@avcopan]) [#33](https://github.com/coltonbh/qccodec/pull/33), [#36](https://github.com/coltonbh/qccodec/pull/36), and [#40](https://github.com/coltonbh/qccodec/pull/40).
@@ -251,7 +253,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Can return either `AtomicResult` or `FailedOperation` objects depending on whether calculation succeeded or failed.
 - Tests for all parsers and the main `parse` function.
 
-[unreleased]: https://github.com/coltonbh/qccodec/compare/0.9.0...HEAD
+[unreleased]: https://github.com/coltonbh/qccodec/compare/0.9.1...HEAD
+[0.9.1]: https://github.com/coltonbh/qccodec/releases/tag/0.9.1
 [0.9.0]: https://github.com/coltonbh/qccodec/releases/tag/0.9.0
 [0.8.1]: https://github.com/coltonbh/qccodec/releases/tag/0.8.1
 [0.8.0]: https://github.com/coltonbh/qccodec/releases/tag/0.8.0
