@@ -24,8 +24,7 @@ test_cases = [
     ParserTestCase(
         name="Parse version",
         parser=parse_version,
-        contents=Path("water.energy.out"),
-        contents_stdout=True,
+        stdout=Path("water.energy.out"),
         calctype=CalcType.energy,
         success=True,
         answer="6.1.0",
@@ -33,8 +32,7 @@ test_cases = [
     ParserTestCase(
         name="Parse energy from energy log",
         parser=parse_energy,
-        contents=Path("water.energy.out"),
-        contents_stdout=True,
+        stdout=Path("water.energy.out"),
         calctype=CalcType.energy,
         success=True,
         answer=-76.320421659333,
@@ -42,8 +40,7 @@ test_cases = [
     ParserTestCase(
         name="Parse energy from gradient log",
         parser=parse_energy,
-        contents=Path("water.grad.out"),
-        contents_stdout=True,
+        stdout=Path("water.grad.out"),
         calctype=CalcType.gradient,
         success=True,
         answer=-76.320385565717,
@@ -51,8 +48,7 @@ test_cases = [
     ParserTestCase(
         name="Parse energy from hessian log",
         parser=parse_energy,
-        contents=Path("water.hess.out"),
-        contents_stdout=True,
+        stdout=Path("water.hess.out"),
         calctype=CalcType.hessian,
         success=True,
         answer=-76.320421659333,
@@ -60,8 +56,7 @@ test_cases = [
     ParserTestCase(
         name="Parse analytic gradient",
         parser=parse_gradient,
-        contents=Path("water.grad.out"),
-        contents_stdout=True,
+        stdout=Path("water.grad.out"),
         calctype=CalcType.gradient,
         success=True,
         answer=gradients.water_b3lyp,
@@ -69,8 +64,7 @@ test_cases = [
     ParserTestCase(
         name="Parse numerical gradient",
         parser=parse_gradient,
-        contents=Path("water.numgrad.out"),
-        contents_stdout=True,
+        stdout=Path("water.numgrad.out"),
         calctype=CalcType.gradient,
         success=True,
         answer=gradients.water_revdsd,
@@ -78,8 +72,7 @@ test_cases = [
     ParserTestCase(
         name="Parse analytic hessian",
         parser=parse_hessian,
-        contents=Path("water.hess.out"),
-        contents_stdout=True,
+        stdout=Path("water.hess.out"),
         calctype=CalcType.hessian,
         success=True,
         answer=hessians.water_b3lyp,
@@ -88,8 +81,7 @@ test_cases = [
     ParserTestCase(
         name="Parse numerical hessian",
         parser=parse_hessian,
-        contents=Path("water.numhess.out"),
-        contents_stdout=True,
+        stdout=Path("water.numhess.out"),
         calctype=CalcType.hessian,
         success=True,
         answer=hessians.water_revdsd,
@@ -98,8 +90,7 @@ test_cases = [
     ParserTestCase(
         name="Parse number of atoms water",
         parser=parse_natoms,
-        contents=Path("water.energy.out"),
-        contents_stdout=True,
+        stdout=Path("water.energy.out"),
         calctype=CalcType.energy,
         success=True,
         answer=3,
@@ -107,8 +98,7 @@ test_cases = [
     ParserTestCase(
         name="Parse trajectory",
         parser=parse_trajectory,
-        contents=Path("water.opt.out"),
-        contents_stdout=True,
+        stdout=Path("water.opt.out"),
         calctype=CalcType.optimization,
         success=True,
         answer=trajectories.trajectory,
