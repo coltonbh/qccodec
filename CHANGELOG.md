@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Added
+
+- Parsers and encoders for ORCA (by [@avcopan]) [#33](https://github.com/coltonbh/qccodec/pull/33), [#36](https://github.com/coltonbh/qccodec/pull/36), and [#40](https://github.com/coltonbh/qccodec/pull/40).
+
 ## [0.9.0] - 2025-10-09
 
 ### Changed
