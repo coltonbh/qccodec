@@ -113,26 +113,20 @@ def _load_contents(
     tc: ParserTestCase, stdout: str | None, directory: Path
 ) -> str | bytes | Path:
     """Load the contents to be parsed for a TestCase."""
-    # Import the program-specific module.
     mod = inspect.getmodule(tc.parser)
     if mod is None:
-        msg = f"Failed to import module {mod}"
-        raise RuntimeError(msg)
+        raise RuntimeError(f"Failed to import module {mod}")
 
-    # Load the appropriate contents for this parser
     parser_spec = registry.get_spec(tc.parser)
-    files = mod.iter_files(stdout, directory)
-    try:
-        contents = next(
-            contents for filetype, contents in files if filetype == parser_spec.filetype
-        )
-    except StopIteration:
-        msg = (
-            f"Failed to find file type {parser_spec.filetype} in directory {directory}"
-        )
-        raise RuntimeError(msg)
 
-    return contents
+    for filetype, contents in mod.iter_files(stdout, directory):
+        if filetype == parser_spec.filetype:
+            return contents
+
+    # No matching file found
+    raise RuntimeError(
+        f"Failed to find file type {parser_spec.filetype} in directory {directory}"
+    )
 
 
 def get_target_value(results, target):
