@@ -132,8 +132,7 @@ def parse_hessian(contents: str) -> list[list[float]]:
         None,
     )
     if entry is None:
-        msg = "Failed to find hessian block in Hessian file."
-        raise ParserError(msg)
+        raise ParserError("Failed to find hessian block in Hessian file.")
 
     dim = int(entry.splitlines()[1])
 
