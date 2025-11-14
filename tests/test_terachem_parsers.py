@@ -30,8 +30,7 @@ test_cases = [
     ParserTestCase(
         name="Parse energy",
         parser=parse_energy,
-        contents=Path("water.energy.out"),
-        contents_stdout=True,
+        stdout=Path("water.energy.out"),
         calctype=CalcType.energy,
         success=True,
         answer=-76.3861099088,
@@ -39,16 +38,14 @@ test_cases = [
     ParserTestCase(
         name="Parse energy no energy",
         parser=parse_energy,
-        contents="No energy here",
-        contents_stdout=True,
+        stdout="No energy here",
         calctype=CalcType.energy,
         success=False,
     ),
     ParserTestCase(
         name="Parse energy gradient",
         parser=parse_energy,
-        contents=Path("water.gradient.out"),
-        contents_stdout=True,
+        stdout=Path("water.gradient.out"),
         calctype=CalcType.gradient,
         success=True,
         answer=-76.3861099088,
@@ -56,8 +53,7 @@ test_cases = [
     ParserTestCase(
         name="Parse energy hessian",
         parser=parse_energy,
-        contents=Path("water.frequencies.out"),
-        contents_stdout=True,
+        stdout=Path("water.frequencies.out"),
         calctype=CalcType.hessian,
         success=True,
         answer=-76.3861099088,
@@ -65,8 +61,7 @@ test_cases = [
     ParserTestCase(
         name="Parse energy excited states energy",
         parser=parse_energy,
-        contents=Path("water.tddft.out"),
-        contents_stdout=True,
+        stdout=Path("water.tddft.out"),
         calctype=CalcType.energy,
         success=True,
         answer=-76.4002287974,
@@ -74,8 +69,7 @@ test_cases = [
     ParserTestCase(
         name="Parse energy excited states positive",
         parser=parse_energy,
-        contents="FINAL ENERGY: 124.38543379982 a.u",
-        contents_stdout=True,
+        stdout="FINAL ENERGY: 124.38543379982 a.u",
         calctype=CalcType.energy,
         success=True,
         answer=124.38543379982,
@@ -83,8 +77,7 @@ test_cases = [
     ParserTestCase(
         name="Parse energy excited states negative integer",
         parser=parse_energy,
-        contents="FINAL ENERGY: -7634 a.u",
-        contents_stdout=True,
+        stdout="FINAL ENERGY: -7634 a.u",
         calctype=CalcType.energy,
         success=True,
         answer=-7634,
@@ -92,8 +85,7 @@ test_cases = [
     ParserTestCase(
         name="Parse energy excited states positive integer",
         parser=parse_energy,
-        contents="FINAL ENERGY: 7123 a.u",
-        contents_stdout=True,
+        stdout="FINAL ENERGY: 7123 a.u",
         calctype=CalcType.energy,
         success=True,
         answer=7123,
@@ -101,8 +93,7 @@ test_cases = [
     ParserTestCase(
         name="Parse version git",
         parser=parse_version,
-        contents=Path("water.energy.out"),
-        contents_stdout=True,
+        stdout=Path("water.energy.out"),
         calctype=CalcType.energy,
         success=True,
         answer="v1.9-2022.03-dev [4daa16dd21e78d64be5415f7663c3d7c2785203c]",
@@ -110,8 +101,7 @@ test_cases = [
     ParserTestCase(
         name="Parse version hg",
         parser=parse_version,
-        contents=Path("hg.out"),
-        contents_stdout=True,
+        stdout=Path("hg.out"),
         calctype=CalcType.energy,
         success=True,
         answer="v1.5K [ccdev]",
@@ -119,8 +109,7 @@ test_cases = [
     ParserTestCase(
         name="Parse water gradient",
         parser=parse_gradient,
-        contents=Path("water.gradient.out"),
-        contents_stdout=True,
+        stdout=Path("water.gradient.out"),
         calctype=CalcType.gradient,
         success=True,
         answer=gradients.water,
@@ -128,8 +117,7 @@ test_cases = [
     ParserTestCase(
         name="Parse caffeine gradient",
         parser=parse_gradient,
-        contents=Path("caffeine.gradient.out"),
-        contents_stdout=True,
+        stdout=Path("caffeine.gradient.out"),
         calctype=CalcType.gradient,
         success=True,
         answer=gradients.caffeine,
@@ -137,8 +125,7 @@ test_cases = [
     ParserTestCase(
         name="Parse caffeine gradient from frequencies output",
         parser=parse_gradient,
-        contents=Path("caffeine.frequencies.out"),
-        contents_stdout=True,
+        stdout=Path("caffeine.frequencies.out"),
         calctype=CalcType.hessian,
         success=True,
         answer=gradients.caffeine_frequencies,
@@ -146,8 +133,7 @@ test_cases = [
     ParserTestCase(
         name="Parse water hessian",
         parser=parse_hessian,
-        contents=Path("water.frequencies.out"),
-        contents_stdout=True,
+        stdout=Path("water.frequencies.out"),
         calctype=CalcType.hessian,
         success=True,
         answer=hessians.water,
@@ -155,8 +141,7 @@ test_cases = [
     ParserTestCase(
         name="Parse caffeine hessian",
         parser=parse_hessian,
-        contents=Path("caffeine.frequencies.out"),
-        contents_stdout=True,
+        stdout=Path("caffeine.frequencies.out"),
         calctype=CalcType.hessian,
         success=True,
         answer=hessians.caffeine,
@@ -164,8 +149,7 @@ test_cases = [
     ParserTestCase(
         name="Parse number of atoms water",
         parser=parse_natoms,
-        contents=Path("water.energy.out"),
-        contents_stdout=True,
+        stdout=Path("water.energy.out"),
         calctype=CalcType.energy,
         success=True,
         answer=3,
@@ -173,8 +157,7 @@ test_cases = [
     ParserTestCase(
         name="Parse number of atoms caffeine",
         parser=parse_natoms,
-        contents=Path("caffeine.gradient.out"),
-        contents_stdout=True,
+        stdout=Path("caffeine.gradient.out"),
         calctype=CalcType.gradient,
         success=True,
         answer=24,
@@ -182,8 +165,7 @@ test_cases = [
     ParserTestCase(
         name="Parse number of MOs water",
         parser=parse_nmo,
-        contents=Path("water.energy.out"),
-        contents_stdout=True,
+        stdout=Path("water.energy.out"),
         calctype=CalcType.energy,
         success=True,
         answer=13,
@@ -191,8 +173,7 @@ test_cases = [
     ParserTestCase(
         name="Parse number of MOs caffeine",
         parser=parse_nmo,
-        contents=Path("caffeine.gradient.out"),
-        contents_stdout=True,
+        stdout=Path("caffeine.gradient.out"),
         calctype=CalcType.gradient,
         success=True,
         answer=146,
@@ -200,8 +181,7 @@ test_cases = [
     ParserTestCase(
         name="Parse excited states water",
         parser=parse_excited_states,
-        contents=Path("water.tddft.out"),
-        contents_stdout=True,
+        stdout=Path("water.tddft.out"),
         calctype=CalcType.energy,
         success=True,
         answer=excited_states.water,
@@ -209,8 +189,7 @@ test_cases = [
     ParserTestCase(
         name="Parse excited states caffeine",
         parser=parse_excited_states,
-        contents=Path("caffeine.tddft.out"),
-        contents_stdout=True,
+        stdout=Path("caffeine.tddft.out"),
         calctype=CalcType.energy,
         success=True,
         answer=excited_states.caffeine,
@@ -218,8 +197,7 @@ test_cases = [
     ParserTestCase(
         name="Parse excited states not found",
         parser=parse_excited_states,
-        contents=Path("water.energy.out"),
-        contents_stdout=True,
+        stdout=Path("water.energy.out"),
         calctype=CalcType.energy,
         decode_exc=False,
         success=False,
@@ -227,8 +205,7 @@ test_cases = [
     ParserTestCase(
         name="Parse trajectory",
         parser=parse_trajectory,
-        contents=Path("water.opt.out"),
-        contents_stdout=True,
+        stdout=Path("water.opt.out"),
         calctype=CalcType.optimization,
         success=True,
         answer=trajectories.trajectory,
@@ -239,8 +216,7 @@ test_cases = [
     ParserTestCase(
         name="Parse trajectory charge and multiplicity",
         parser=parse_trajectory,
-        contents=Path("ch3.opt.out"),
-        contents_stdout=True,
+        stdout=Path("ch3.opt.out"),
         calctype=CalcType.optimization,
         success=True,
         answer=trajectories.ch3_trajectory,
@@ -252,8 +228,7 @@ test_cases = [
     ParserTestCase(
         name="Parse trajectory MatchNotFound",
         parser=parse_trajectory,
-        contents=Path("water.energy.out"),
-        contents_stdout=True,
+        stdout=Path("water.energy.out"),
         calctype=CalcType.optimization,
         success=False,
         clear_registry=False,
@@ -263,8 +238,7 @@ test_cases = [
     ParserTestCase(
         name="Parse trajectory excited state",
         parser=parse_trajectory,
-        contents=Path("excited-state-opt.out"),
-        contents_stdout=True,
+        stdout=Path("excited-state-opt.out"),
         calctype=CalcType.optimization,
         success=True,
         answer=trajectories.es_trajectory,
