@@ -3,7 +3,6 @@ import shutil
 from collections.abc import Callable
 from contextlib import contextmanager
 from dataclasses import dataclass
-from importlib import import_module
 from pathlib import Path
 from typing import Any
 
@@ -114,13 +113,11 @@ def _load_contents(
     tc: ParserTestCase, stdout: str | None, directory: Path
 ) -> str | bytes | Path:
     """Load the contents to be parsed for a TestCase."""
-    program = inspect.getmodule(tc.parser).__name__.split(".")[-1]
     # Import the program-specific module.
-    try:
-        mod = import_module(f"qccodec.parsers.{program}")
-    except ImportError as e:
-        msg = f"Failed to import moduled qccodec.parsers.{program}"
-        raise RuntimeError(msg) from e
+    mod = inspect.getmodule(tc.parser)
+    if mod is None:
+        msg = f"Failed to import module {mod}"
+        raise RuntimeError(msg)
 
     # Load the appropriate contents for this parser
     parser_spec = registry.get_spec(tc.parser)
