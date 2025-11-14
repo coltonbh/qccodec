@@ -107,9 +107,6 @@ def parse_gradient(contents: str) -> list[list[float]]:
     header_regex = r"CARTESIAN GRADIENT.*?(?=\d)"  # non-greedy lookahead to first digit
     header_match = re_search(header_regex, contents, flags=re.DOTALL)
 
-    if not header_match:
-        raise MatchNotFoundError(regex=header_regex, contents=contents)
-
     block_start = header_match.end()
     block_lines = itertools.takewhile(
         lambda line: re.search(r"\d\s*$", line), contents[block_start:].splitlines()
@@ -128,19 +125,7 @@ def parse_gradient(contents: str) -> list[list[float]]:
     target="hessian",
 )
 def parse_hessian(contents: str) -> list[list[float]]:
-    """Parse the output directory of a Orca optimization calculation into a trajectory.
-
-    Args:
-        directory: Path to the directory containing the Orca output files.
-        stdout: The contents of the Orca stdout file.
-        input_data: The input object used for the calculation.
-
-    Returns:
-        A square Hessian matrix as a list of lists of floats.
-
-    Raises:
-        ParserError: If unable to find or parse the Hessian block.
-    """
+    """Parse hessian from .hess file."""
     # Find hessian entry in basename.hess file
     entry = next(
         (block for block in contents.split("$") if block.startswith("hess")),
@@ -155,8 +140,7 @@ def parse_hessian(contents: str) -> list[list[float]]:
     # Split the hessian entry into blocks on lines of the form '  0  1  2  3 ...'
     split_result = re.split(r"^\s*(?:\d+\s+)+\d+\s*$", entry, flags=re.MULTILINE)
     if not len(split_result) > 1:
-        msg = f"Failed to parse blocks in hessian entry:\n{entry}"
-        raise ParserError(msg)
+        raise ParserError(f"Failed to parse blocks in hessian entry: {entry}")
 
     # Get the text for each block and
     blocks = [block.strip() for block in split_result[1:]]
@@ -164,8 +148,7 @@ def parse_hessian(contents: str) -> list[list[float]]:
     for block in blocks:
         lines = block.splitlines()
         if not len(lines) == dim:
-            msg = f"Block line count {len(lines)} does not match dimension {dim}:\n{block}"
-            raise ParserError(msg)
+            raise ParserError(f"Block line count {len(lines)} does not match dimension {dim}: {block}")
 
         for i, line in enumerate(block.splitlines()):
             row = list(map(float, line.split()[1:]))
@@ -198,8 +181,7 @@ def parse_trajectory(
     directory = Path(directory)
     file = directory / f"{basename}_trj.xyz"
     if not file.exists():
-        msg = f"Trajectory file does not exist: {file}"
-        raise ParserError(msg)
+        raise ParserError(f"Trajectory file does not exist: {file}")
 
     # Parse the structures, energies, and gradients
     structures = Structure.open_multi(file)
@@ -261,10 +243,10 @@ def parse_trajectory(
 
 
 @register(filetype=OrcaFileType.STDOUT, target=("extras", "program_version"))
-def parse_version(string: str) -> str:
+def parse_version(contents: str) -> str:
     """Parse version string from Orca stdout."""
     regex = r"Program Version (\d+\.\d+\.\d+)"
-    match = re_search(regex, string)
+    match = re_search(regex, contents)
     return match.group(1)
 
 
@@ -283,8 +265,8 @@ def parse_natoms(contents: str) -> int:
     return int(match.group(1))
 
 
-def parse_basename(string: str) -> str:
+def parse_basename(contents: str) -> str:
     """Parse the file basename from Orca stdout."""
     regex = r"NAME\s+=\s+(.*)"
-    match = re_search(regex, string)
+    match = re_search(regex, contents)
     return Path(match.group(1)).stem
