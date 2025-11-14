@@ -111,9 +111,10 @@ def _load_stdout(directory, stdout):
 
 
 def _load_contents(
-    tc: ParserTestCase, stdout: str | None, directory: Path, program: str
+    tc: ParserTestCase, stdout: str | None, directory: Path
 ) -> str | bytes | Path:
     """Load the contents to be parsed for a TestCase."""
+    program = inspect.getmodule(tc.parser).__name__.split(".")[-1]
     # Import the program-specific module.
     try:
         mod = import_module(f"qccodec.parsers.{program}")
@@ -150,16 +151,18 @@ def get_target_value(results, target):
     return d.get(keys[-1], None)
 
 
-def _test_parser_direct(tc, stdout, contents, directory, proginp, parser_spec):
+def _test_parser_direct(tc, stdout, directory, proginp, parser_spec):
     """Test the parser function directly with the provided contents.
 
     Args:
         tc: The TestCase object containing the test parameters.
-        contents: The contents to be parsed.
+        stdout: The stdout file contents as a string.
         directory: The directory containing the test data files.
         proginp: The ProgramInput to provide to directory parsers.
         parser_spec: The specification of the parser being tested.
     """
+    contents = _load_contents(tc, stdout, directory)
+
     if tc.success:
         # Successful execution of directory parser
         if parser_spec.filetype == "directory":
@@ -292,11 +295,8 @@ def run_test_harness(test_data_dir, input_factory, tmp_path, tc):
                 tmp_path / extra_file_name,
             )
 
-    # Load the contents to be parsed **after** copying extra files.
-    contents = _load_contents(tc, stdout, tmp_path, program)
-
     # Test the parser directly.
-    _test_parser_direct(tc, stdout, contents, tmp_path, proginput, parser_spec)
+    _test_parser_direct(tc, stdout, tmp_path, proginput, parser_spec)
 
     # Now test integration via decode() with a restricted registry.
     with restore_registry(program):
@@ -304,6 +304,4 @@ def run_test_harness(test_data_dir, input_factory, tmp_path, tc):
             # Clear the registry of all other parsers for this program.
             registry.registry.pop(program)
             registry.registry[program] = [parser_spec]
-        _test_decode_integration(
-            tc, stdout, tmp_path, proginput, program, parser_spec
-        )
+        _test_decode_integration(tc, stdout, tmp_path, proginput, program, parser_spec)
