@@ -68,10 +68,9 @@ class ParserTestCase:
     Attributes:
         name: A human-readable name for the test case.
         parser: The parser function to be tested.
-        contents: The input data for the parser, either as a string or a Path.
-        contents_stdout: Boolean indicating if the contents should be treated as stdout.
         calctype: The calculation type for the test case.
         success: Boolean indicating if the parser should succeed on the contents.
+        stdout: The stdout file contents as a string, if needed
         decode_exc: Boolean indicating if an exception is expected for MatchNotFound
             errors during decode. Default is True. required=False parsers should not
             raise an error.
@@ -89,10 +88,9 @@ class ParserTestCase:
 
     name: str
     parser: Callable
-    contents: str | Path
-    contents_stdout: bool
     calctype: CalcType
     success: bool
+    stdout: str | Path | None = None
     decode_exc: bool = True
     answer: Any | None = None
     clear_registry: bool = True
@@ -101,14 +99,34 @@ class ParserTestCase:
     program_input: ProgramInput | None = None
 
 
-def _load_contents(directory, contents):
-    """Load the contents of a TestCase."""
-    if isinstance(contents, Path):
+def _load_stdout(directory, stdout):
+    """Load the stdout for a TestCase."""
+    if isinstance(stdout, Path):
         # Contents is a Path, so we read the file directly.
-        return (directory / contents).read_text()
+        return (directory / stdout).read_text()
     else:
         # Contents is a string, so we assume it's the content itself.
-        return contents
+        return stdout
+
+
+def _load_contents(
+    tc: ParserTestCase, stdout: str | None, directory: Path
+) -> str | bytes | Path:
+    """Load the contents to be parsed for a TestCase."""
+    mod = inspect.getmodule(tc.parser)
+    if mod is None:
+        raise RuntimeError(f"Failed to import module {mod}")
+
+    parser_spec = registry.get_spec(tc.parser)
+
+    for filetype, contents in mod.iter_files(stdout, directory):
+        if filetype == parser_spec.filetype:
+            return contents
+
+    # No matching file found
+    raise RuntimeError(
+        f"Failed to find file type {parser_spec.filetype} in directory {directory}"
+    )
 
 
 def get_target_value(results, target):
@@ -124,24 +142,22 @@ def get_target_value(results, target):
     return d.get(keys[-1], None)
 
 
-def _test_parser_direct(tc, contents, directory, proginp, parser_spec):
+def _test_parser_direct(tc, stdout, directory, proginp, parser_spec):
     """Test the parser function directly with the provided contents.
 
     Args:
         tc: The TestCase object containing the test parameters.
-        contents: The contents to be parsed.
+        stdout: The stdout file contents as a string.
         directory: The directory containing the test data files.
         proginp: The ProgramInput to provide to directory parsers.
         parser_spec: The specification of the parser being tested.
     """
+    contents = _load_contents(tc, stdout, directory)
+
     if tc.success:
         # Successful execution of directory parser
         if parser_spec.filetype == "directory":
-            parsed = tc.parser(
-                directory,
-                contents if tc.contents_stdout else None,
-                proginp,
-            )
+            parsed = tc.parser(directory, stdout, proginp)
         else:
             # Successful execution of file parser
             parsed = tc.parser(contents)
@@ -153,17 +169,13 @@ def _test_parser_direct(tc, contents, directory, proginp, parser_spec):
         with pytest.raises(MatchNotFoundError):
             if parser_spec.filetype == "directory":
                 # Expect an exception for directory parser
-                tc.parser(
-                    directory,
-                    contents if tc.contents_stdout else None,
-                    proginp,
-                )
+                tc.parser(directory, stdout, proginp)
             else:
                 # Expect an exception for file parser
                 tc.parser(contents)
 
 
-def _test_decode_integration(tc, contents, directory, proginp, program, parser_spec):
+def _test_decode_integration(tc, stdout, directory, proginp, program, parser_spec):
     """
     Test the decode() integration, using only the parser under test (unless tc.clear_registry is False).
 
@@ -190,7 +202,7 @@ def _test_decode_integration(tc, contents, directory, proginp, program, parser_s
         result = decode(
             program,
             tc.calctype,
-            stdout=(contents if tc.contents_stdout else None),
+            stdout=stdout,
             directory=directory,
             input_data=proginp,
             as_dict=True,
@@ -211,7 +223,7 @@ def _test_decode_integration(tc, contents, directory, proginp, program, parser_s
                 decode(
                     program,
                     tc.calctype,
-                    stdout=(contents if tc.contents_stdout else None),
+                    stdout=stdout,
                     directory=directory,
                     input_data=proginp,
                 )
@@ -220,7 +232,7 @@ def _test_decode_integration(tc, contents, directory, proginp, program, parser_s
             result = decode(
                 program,
                 tc.calctype,
-                stdout=(contents if tc.contents_stdout else None),
+                stdout=stdout,
                 directory=directory,
                 input_data=proginp,
                 as_dict=True,
@@ -257,7 +269,7 @@ def run_test_harness(test_data_dir, input_factory, tmp_path, tc):
                 and run the decode() integration test.
     """
     program = inspect.getmodule(tc.parser).__name__.split(".")[-1]
-    contents = _load_contents(test_data_dir / program, tc.contents)
+    stdout = _load_stdout(test_data_dir / program, tc.stdout)
     # Get the spec for the parser under test.
     parser_spec = registry.get_spec(tc.parser)
 
@@ -274,19 +286,8 @@ def run_test_harness(test_data_dir, input_factory, tmp_path, tc):
                 tmp_path / extra_file_name,
             )
 
-    if not tc.contents_stdout:
-        # If contents is not stdout, copy the test data files.
-        if parser_spec.filetype == "directory":
-            # Use the name given in the contents variable.
-            filepath = tmp_path / tc.contents
-        else:
-            # Use the filetype from the parser spec.
-            filepath = tmp_path / parser_spec.filetype.value
-        # Write the contents to the temporary file.
-        filepath.write_text(contents)
-
     # Test the parser directly.
-    _test_parser_direct(tc, contents, tmp_path, proginput, parser_spec)
+    _test_parser_direct(tc, stdout, tmp_path, proginput, parser_spec)
 
     # Now test integration via decode() with a restricted registry.
     with restore_registry(program):
@@ -294,4 +295,4 @@ def run_test_harness(test_data_dir, input_factory, tmp_path, tc):
             # Clear the registry of all other parsers for this program.
             registry.registry.pop(program)
             registry.registry[program] = [parser_spec]
-        _test_decode_integration(tc, contents, tmp_path, proginput, program, parser_spec)
+        _test_decode_integration(tc, stdout, tmp_path, proginput, program, parser_spec)
