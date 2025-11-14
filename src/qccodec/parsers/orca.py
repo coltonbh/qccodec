@@ -4,7 +4,7 @@ import itertools
 import re
 from enum import Enum
 from pathlib import Path
-from typing import Generator, Optional, Union
+from typing import Generator
 
 from qcio import (
     CalcType,
@@ -34,8 +34,8 @@ class OrcaFileType(str, Enum):
 
 
 def iter_files(
-    stdout: Optional[str], directory: Optional[Union[Path, str]]
-) -> Generator[tuple[OrcaFileType, Union[str, bytes, Path]], None, None]:
+    stdout: str | None, directory: Path | str | None
+) -> Generator[tuple[OrcaFileType, str | bytes | Path], None, None]:
     """
     Iterate over the files in a Orca output directory.
 
@@ -180,7 +180,7 @@ def parse_hessian(contents: str) -> list[list[float]]:
     target="trajectory",
 )
 def parse_trajectory(
-    directory: Union[Path, str],
+    directory: Path | str,
     stdout: str,
     input_data: ProgramInput,
 ) -> list[Results]:
