@@ -5,7 +5,7 @@ from importlib import import_module
 from pathlib import Path
 from typing import Any
 
-from qcio import (
+from qcdata import (
     CalcType,
     ConformerSearchData,
     OptimizationData,

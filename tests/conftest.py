@@ -7,8 +7,8 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from qcio import CalcType, ProgramInput
-from qcio.utils import water
+from qcdata import CalcType, ProgramInput
+from qcdata.utils import water
 
 from qccodec.codec import decode
 from qccodec.exceptions import MatchNotFoundError

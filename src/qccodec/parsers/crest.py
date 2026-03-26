@@ -7,11 +7,11 @@ from typing import Any
 
 import numpy as np
 from qcconst import constants
-from qcio import (
+from qcdata import (
     CalcType,
     ProgramInput,
+    ProgramOutput,
     Provenance,
-    Results,
     SinglePointData,
     Structure,
 )
@@ -313,7 +313,7 @@ def parse_trajectory(
     directory: Path | str,
     stdout: str,
     input_data: ProgramInput,
-) -> list[Results]:
+) -> list[ProgramOutput]:
     """Parse the output directory of a CREST optimization calculation.
 
     Args:
@@ -322,7 +322,7 @@ def parse_trajectory(
         input_data: The input object used for the calculation.
 
     Returns:
-        The parsed optimization results as a list of Results objects.
+        The parsed optimization results as a list of ProgramOutput objects.
     """
     # Read in the xyz file containing the trajectory
     directory = Path(directory)
@@ -345,8 +345,8 @@ def parse_trajectory(
     program_version = parse_version(stdout)
 
     # Create the optimization trajectory
-    trajectory: list[Results] = [
-        Results(
+    trajectory: list[ProgramOutput] = [
+        ProgramOutput(
             input_data=ProgramInput(
                 calctype=CalcType.gradient,
                 structure=struct,
@@ -375,6 +375,6 @@ def parse_trajectory(
         # Calculation failed, so set the last .success = False
         final_po = trajectory[-1].model_dump()
         final_po["success"] = False
-        trajectory[-1] = Results(**final_po)
+        trajectory[-1] = ProgramOutput(**final_po)
 
     return trajectory

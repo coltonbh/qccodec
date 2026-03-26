@@ -3,7 +3,7 @@ import os
 from typing import Any
 
 import tomli_w
-from qcio import CalcType, ProgramInput
+from qcdata import CalcType, ProgramInput
 
 from qccodec.exceptions import EncoderError
 from qccodec.models import NativeInput
@@ -21,7 +21,7 @@ def encode(program_input: ProgramInput) -> NativeInput:
     """Translate a ProgramInput into CREST input files.
 
     Args:
-        program_input: The qcio ProgramInput object for a computation.
+        program_input: The qcdata ProgramInput object for a computation.
 
     Returns:
         NativeInput with .input_files being a crest.toml file and .geometry_file the
@@ -41,7 +41,7 @@ def validate_input(program_input: ProgramInput):
     """Validate the input for CREST.
 
     Args:
-        program_input: The qcio ProgramInput object for a computation.
+        program_input: The qcdata ProgramInput object for a computation.
 
     Raises:
         EncoderError: If the input is invalid.

@@ -4,7 +4,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
 
-from qcio import CalcType
+from qcdata import CalcType
 
 from qccodec.exceptions import RegistryError
 

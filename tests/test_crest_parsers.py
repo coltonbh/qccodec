@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import pytest
-from qcio import CalcType, ProgramInput
+from qcdata import CalcType, ProgramInput
 
 from qccodec.parsers.crest import (
     parse_conformers,
