@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.10.0] - 2026-03-26
+
 ### Changed
 
 - Updated the codebase, tests, and documentation to use `qcdata` in place of `qcio`. [#41](https://github.com/coltonbh/qccodec/pull/41)
@@ -258,7 +260,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Can return either `AtomicResult` or `FailedOperation` objects depending on whether calculation succeeded or failed.
 - Tests for all parsers and the main `parse` function.
 
-[unreleased]: https://github.com/coltonbh/qccodec/compare/0.9.1...HEAD
+[unreleased]: https://github.com/coltonbh/qccodec/compare/0.10.0...HEAD
+[0.10.0]: https://github.com/coltonbh/qccodec/releases/tag/0.10.0
 [0.9.1]: https://github.com/coltonbh/qccodec/releases/tag/0.9.1
 [0.9.0]: https://github.com/coltonbh/qccodec/releases/tag/0.9.0
 [0.8.1]: https://github.com/coltonbh/qccodec/releases/tag/0.8.1
