@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import pytest
-from qcio import CalcType
+from qcdata import CalcType
 
 from qccodec.parsers.orca import (
     parse_energy,

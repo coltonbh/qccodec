@@ -1,7 +1,7 @@
 from enum import Enum
 
 import pytest
-from qcio import CalcType
+from qcdata import CalcType
 
 from qccodec.exceptions import RegistryError
 from qccodec.registry import ParserSpec

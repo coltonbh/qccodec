@@ -6,11 +6,11 @@ from enum import Enum
 from pathlib import Path
 
 from qcconst import constants
-from qcio import (
+from qcdata import (
     CalcType,
     ProgramInput,
+    ProgramOutput,
     Provenance,
-    Results,
     SinglePointData,
     Structure,
 )
@@ -198,7 +198,7 @@ def parse_trajectory(
     directory: Path | str,
     stdout: str,
     input_data: ProgramInput,
-) -> list[Results]:
+) -> list[ProgramOutput]:
     """Parse the output directory of a TeraChem optimization calculation into a trajectory.
 
     Args:
@@ -207,7 +207,7 @@ def parse_trajectory(
         input_data: The input object used for the calculation.
 
     Returns:
-        A list of Results objects.
+        A list of ProgramOutput objects.
     """
     directory = Path(directory)
 
@@ -245,7 +245,7 @@ def parse_trajectory(
     from qccodec import decode
 
     # Create the trajectory
-    trajectory: list[Results] = []
+    trajectory: list[ProgramOutput] = []
 
     for structure, grad_stdout in zip(structures, per_gradient_stdout):
         # Create input data object for each structure and gradient in the trajectory.
@@ -269,8 +269,8 @@ def parse_trajectory(
             program_version=parsed_results.extras["program_version"],
             scratch_dir=directory,
         )
-        # Create the Results object for each structure and gradient in the trajectory.
-        traj_entry: Results = Results(
+        # Create the ProgramOutput object for each structure and gradient in the trajectory.
+        traj_entry: ProgramOutput = ProgramOutput(
             input_data=input_data_obj,
             success=True,
             data=results_obj,

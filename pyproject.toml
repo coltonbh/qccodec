@@ -1,7 +1,7 @@
 [project]
 name = "qccodec"
 version = "0.9.1"
-description = "A package for parsing Quantum Chemistry program file outputs into structured qcio data objects."
+description = "Encode qcdata inputs into native quantum chemistry files and decode (parse) program outputs into structured qcdata objects."
 readme = "README.md"
 authors = [{ name = "Colton Hicks", email = "github@coltonhicks.com" }]
 requires-python = ">=3.10"
@@ -9,7 +9,7 @@ license = { file = "LICENSE" }
 dependencies = [
     "tomli-w>=1.0.0",
     "qcconst>=0.2.1",
-    "qcio>=0.16.0",
+    "qcdata>=0.17.0",
 ]
 
 classifiers = [
@@ -30,7 +30,7 @@ keywords = [
     "quantum chemistry",
     "parsing",
     "file parser",
-    "qcio",
+    "qcdata",
     "computational chemistry",
     "scientific computing",
 ]

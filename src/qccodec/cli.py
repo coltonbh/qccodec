@@ -11,7 +11,7 @@ def main():
     )
     parser.add_argument("program", help="Name of the program")
     parser.add_argument(
-        "calctype", help="Type of calculation. See qcio.CalcType for options"
+        "calctype", help="Type of calculation. See qcdata.CalcType for options"
     )
     parser.add_argument(
         "stdout",
@@ -32,3 +32,7 @@ def main():
         args.program, args.calctype, stdout=stdout_contents, directory=args.directory
     )
     print(results.model_dump_json(indent=4, exclude_unset=True))
+
+
+if __name__ == "__main__":
+    main()

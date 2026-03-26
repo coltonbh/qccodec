@@ -1,6 +1,6 @@
 from typing import Any
 
-from qcio import Results
+from qcdata import ProgramOutput
 
 optimization_dicts: list[dict[str, Any]] = [
         {
@@ -353,4 +353,4 @@ optimization_dicts: list[dict[str, Any]] = [
         },
     ]
 
-optimization: list[Results] = [Results(**val) for val in optimization_dicts]
+optimization: list[ProgramOutput] = [ProgramOutput(**val) for val in optimization_dicts]

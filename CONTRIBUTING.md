@@ -21,7 +21,7 @@ All parsers are registered via the `@register` decorator. The decorator’s para
 
 - `filetype`: A value (typically from a program-specific enum such as `CrestFileType`) indicating the type of file the parser handles. For example, `CrestFileType.stdout` for log output or `CrestFileType.directory` for full-directory processing.
 
-- `calctypes` (optional): A list of calculation types (from the `qcio.CalcType` enum) on which this parser should run. If omitted, the parser applies to all calculation types.
+- `calctypes` (optional): A list of calculation types (from the `qcdata.CalcType` enum) on which this parser should run. If omitted, the parser applies to all calculation types.
 
 - `required`: A boolean indicating whether this parser is mandatory. If `True` and the parser fails to parse the expected data, a `MatchNotFoundError` is raised when the parser is executed from within the `decode` function. The parser should always raise a `MatchNotFoundError` if the value is not found and it is called on its own.
 
@@ -33,7 +33,7 @@ The registry itself enforces that no two parsers for the same program register t
 
 ```python
 from qccodec import register
-from qcio import CalcType
+from qcdata import CalcType
 from qccodec.utils import re_search
 
 
@@ -59,7 +59,7 @@ In this case, because the parser processes the whole directory output and return
 
 ```python
 from qccodec import register
-from qcio import CalcType, ProgramInput
+from qcdata import CalcType, ProgramInput
 
 @register(filetype=CrestFileType.DIRECTORY, calctypes=[CalcType.conformer_search])
 def parse_conformers(directory: Path, stdout: Optional[str], input_data: ProgramInput) -> dict[str, Any]:
@@ -135,7 +135,7 @@ The decode function orchestrates the parsing process:
 
     - For Composite (Directory) Parsers: Calls the parser with additional context (directory, stdout, input object). If the parser returns a dictionary, its key–value pairs are merged into the data collector, otherwise it assigns the returned value at the specified target.
 
-4.  Finally, the assembled data (a dictionary) is passed into the correct result model from `qcio` and returned.
+4.  Finally, the assembled data (a dictionary) is passed into the correct result model from `qcdata` and returned.
 
 ## Duplicate Target Registration
 

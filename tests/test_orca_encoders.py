@@ -1,6 +1,6 @@
 import pytest
-from qcio import CalcType, Model, ProgramInput
-from qcio.utils import water
+from qcdata import CalcType, Model, ProgramInput
+from qcdata.utils import water
 
 from qccodec.encoders.orca import _validate_keywords, encode
 from qccodec.exceptions import EncoderError

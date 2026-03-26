@@ -50,12 +50,12 @@ def test_write_input_files_renames_hessian_to_frequencies(prog_input_factory):
     )
 
 
-def test_encode_raises_error_qcio_args_passes_as_keywords(prog_input_factory):
+def test_encode_raises_error_qcdata_args_passed_as_keywords(prog_input_factory):
     """These keywords should not be in the .keywords dict. They belong on structured
-    qcio objects instead."""
-    qcio_keywords_from_terachem = ["charge", "spinmult", "method", "basis", "run"]
+    qcdata objects instead."""
+    qcdata_keywords_from_terachem = ["charge", "spinmult", "method", "basis", "run"]
     prog_input_factory = prog_input_factory("energy")
-    for keyword in qcio_keywords_from_terachem:
+    for keyword in qcdata_keywords_from_terachem:
         prog_input_factory.keywords[keyword] = "some value"
         with pytest.raises(EncoderError):
             encode(prog_input_factory)

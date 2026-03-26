@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Changed
+
+- Updated the codebase, tests, and documentation to use `qcdata` in place of `qcio`. [#41](https://github.com/coltonbh/qccodec/pull/41)
+- Replaced deprecated `Results` usage with `ProgramOutput` in parser trajectories and test fixtures. [#41](https://github.com/coltonbh/qccodec/pull/41)
+
 ## [0.9.1] - 2025-11-14
 
 ### Added
@@ -225,7 +230,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 
-- Dropped support for `QCSchema` models and changed to [qcio](https://github.com/coltonbh/qcio) data models.
+- Dropped support for `QCSchema` models and changed to `qcio` (now [qcdata](https://github.com/coltonbh/qcdata)) data models.
 - `parse` function now raises `NotImplementedError` and the default use case is to use `parse_computed_prop` instead and ignore inputs and provenance data. This is the minimum spec since QC programs can be powered using structured inputs and [qcop](https://github.com/coltonbh/qcop). I may go back to parsing entire `SinglePointSuccess/FailedOutput` objects if use cases arise.
 
 ## [0.2.1] - 2023-03-25

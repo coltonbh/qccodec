@@ -1,4 +1,4 @@
-from qcio import Structure
+from qcdata import Structure
 
 conformers = {
     "conformers": [
