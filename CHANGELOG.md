@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Fixed
+
+- ORCA encoder no longer writes `None` if no basis (e.g., when no basis is needed for an XTB calculation). [#42](https://github.com/coltonbh/qccodec/pull/42) by [TroyNSmith](https://github.com/TroyNSmith)
+
 ## [0.10.0] - 2026-03-26
 
 ### Changed
