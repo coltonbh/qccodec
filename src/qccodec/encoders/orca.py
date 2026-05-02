@@ -96,7 +96,12 @@ def encode(program_input: ProgramInput) -> NativeInput:
         inp_lines.append("")
 
     # Method and Basis
-    inp_lines.append(f"! {program_input.model.method} {program_input.model.basis}")
+    model_line = f"! {program_input.model.method}"
+    # ORCA will not recognize 'None' when using composite methods
+    if program_input.model.basis:
+        model_line += f" {program_input.model.basis}"
+
+    inp_lines.append(model_line)
 
     # NumGrad. May be used for gradients or optimizations
     if "numgrad" in kw_lower:

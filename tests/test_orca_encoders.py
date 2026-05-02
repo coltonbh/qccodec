@@ -81,6 +81,17 @@ def test_write_input_files(
                 )
 
 
+def test_no_none_fields():
+    """Tests 'None' not in input file when basis not provided."""
+    program_input = ProgramInput(
+        calctype=CalcType.optimization, model=Model(method="xTB"), structure=water
+    )
+    native_input = encode(program_input)
+    input_file = native_input.input_file
+
+    assert "None" not in input_file, f"'None' found in\n{input_file}"
+
+
 def test_validate_keywords_raises_error_if_coords_block_in_keywords():
     """The 'coords' block should not be set directly as a keyword."""
 
