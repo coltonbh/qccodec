@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Fixed
+- Deleted ORCA `parse_natoms` to fix parsing of xTB log files.
+- Fixed gradient regex to account for arbitrary number of stars in log file.
+
+
 ## [0.10.1] - 2026-05-02
 
 ### Fixed
