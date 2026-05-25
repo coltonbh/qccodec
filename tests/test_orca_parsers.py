@@ -7,7 +7,6 @@ from qccodec.parsers.orca import (
     parse_energy,
     parse_gradient,
     parse_hessian,
-    parse_natoms,
     parse_trajectory,
     parse_version,
 )
@@ -86,14 +85,6 @@ test_cases = [
         success=True,
         answer=hessians.water_revdsd,
         extra_files=["water.numhess.hess"],
-    ),
-    ParserTestCase(
-        name="Parse number of atoms water",
-        parser=parse_natoms,
-        stdout=Path("water.energy.out"),
-        calctype=CalcType.energy,
-        success=True,
-        answer=3,
     ),
     ParserTestCase(
         name="Parse trajectory",

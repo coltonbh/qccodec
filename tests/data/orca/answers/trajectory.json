@@ -69,7 +69,7 @@
     },
     "success": true,
     "data": {
-      "calcinfo_natoms": 3,
+      "calcinfo_natoms": null,
       "calcinfo_nalpha": null,
       "calcinfo_nbeta": null,
       "calcinfo_nbasis": null,
@@ -187,7 +187,7 @@
     },
     "success": true,
     "data": {
-      "calcinfo_natoms": 3,
+      "calcinfo_natoms": null,
       "calcinfo_nalpha": null,
       "calcinfo_nbeta": null,
       "calcinfo_nbasis": null,
@@ -305,7 +305,7 @@
     },
     "success": true,
     "data": {
-      "calcinfo_natoms": 3,
+      "calcinfo_natoms": null,
       "calcinfo_nalpha": null,
       "calcinfo_nbeta": null,
       "calcinfo_nbasis": null,
@@ -423,7 +423,7 @@
     },
     "success": true,
     "data": {
-      "calcinfo_natoms": 3,
+      "calcinfo_natoms": null,
       "calcinfo_nalpha": null,
       "calcinfo_nbeta": null,
       "calcinfo_nbasis": null,
