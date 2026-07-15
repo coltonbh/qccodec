@@ -35,6 +35,7 @@ class ParserSpec:
     calctypes: list[CalcType]
     program: str
     target: str | tuple[str, ...] | None = None
+    explicit_calctypes: bool = True
 
     def __post_init__(self):
         """Ensure that the parser function is Callable and that target exists unless filetype is directory."""
@@ -192,6 +193,7 @@ def register(
             # If calctypes is None, register for all CalcType values
             calctypes=calctypes if calctypes is not None else list(CalcType),
             target=target,
+            explicit_calctypes=calctypes is not None,
         )
 
         # Register the function in the global registry

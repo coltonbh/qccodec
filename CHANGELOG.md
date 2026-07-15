@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Fixed
+
+- `decode()` now raises a parser error when output artifacts required by parser specs for the requested calculation type are missing, while preserving any partial data parsed from available artifacts.
+
 ## [0.10.1] - 2026-05-02
 
 ### Fixed

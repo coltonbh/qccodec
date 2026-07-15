@@ -13,6 +13,10 @@ class EncoderError(BaseError):
 class ParserError(BaseError):
     """Base exception for parsers"""
 
+    def __init__(self, message: str, data=None):
+        super().__init__(message)
+        self.data = data
+
 
 class MatchNotFoundError(ParserError):
     """Exception raised when a parsing match is not found"""
