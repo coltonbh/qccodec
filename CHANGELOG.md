@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.11.0] - 2026-07-15
+
 ### Fixed
 
 - `decode()` now raises a parser error when output artifacts required by parser specs for the requested calculation type are missing, while preserving any partial data parsed from available artifacts.
@@ -274,7 +276,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Can return either `AtomicResult` or `FailedOperation` objects depending on whether calculation succeeded or failed.
 - Tests for all parsers and the main `parse` function.
 
-[unreleased]: https://github.com/coltonbh/qccodec/compare/0.10.2...HEAD
+[unreleased]: https://github.com/coltonbh/qccodec/compare/0.11.0...HEAD
+[0.11.0]: https://github.com/coltonbh/qccodec/releases/tag/0.11.0
 [0.10.2]: https://github.com/coltonbh/qccodec/releases/tag/0.10.2
 [0.10.1]: https://github.com/coltonbh/qccodec/releases/tag/0.10.1
 [0.10.0]: https://github.com/coltonbh/qccodec/releases/tag/0.10.0
