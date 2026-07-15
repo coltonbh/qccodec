@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - `decode()` now raises a parser error when output artifacts required by parser specs for the requested calculation type are missing, while preserving any partial data parsed from available artifacts.
 
+## [0.10.2] - 2026-06-10
+- Marked ORCA `parse_natoms` as `required=False` to fix parsing of xTB log files.
+- Fixed gradient regex to account for arbitrary number of stars in log file.
+
 ## [0.10.1] - 2026-05-02
 
 ### Fixed
@@ -270,7 +274,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Can return either `AtomicResult` or `FailedOperation` objects depending on whether calculation succeeded or failed.
 - Tests for all parsers and the main `parse` function.
 
-[unreleased]: https://github.com/coltonbh/qccodec/compare/0.10.1...HEAD
+[unreleased]: https://github.com/coltonbh/qccodec/compare/0.10.2...HEAD
+[0.10.2]: https://github.com/coltonbh/qccodec/releases/tag/0.10.2
 [0.10.1]: https://github.com/coltonbh/qccodec/releases/tag/0.10.1
 [0.10.0]: https://github.com/coltonbh/qccodec/releases/tag/0.10.0
 [0.9.1]: https://github.com/coltonbh/qccodec/releases/tag/0.9.1

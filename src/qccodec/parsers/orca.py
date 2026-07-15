@@ -147,7 +147,9 @@ def parse_hessian(contents: str) -> list[list[float]]:
     for block in blocks:
         lines = block.splitlines()
         if not len(lines) == dim:
-            raise ParserError(f"Block line count {len(lines)} does not match dimension {dim}: {block}")
+            raise ParserError(
+                f"Block line count {len(lines)} does not match dimension {dim}: {block}"
+            )
 
         for i, line in enumerate(block.splitlines()):
             row = list(map(float, line.split()[1:]))
@@ -194,9 +196,10 @@ def parse_trajectory(
 
     # Capture the stdout for each gradient calculation
     regex = (
-        r"GEOMETRY\s*OPTIMIZATION\s*CYCLE\s*\d+\s*\*\s*\n\s*\**\s*\n"  # header
-        r"(.*?)"  # body
-        r"-*\s*\n\s*ORCA\s+GEOMETRY\s+RELAXATION\s+STEP"
+        r"GEOMETRY\s*OPTIMIZATION\s*CYCLE\s*\d+.*?"  # Match cycle line
+        r"\*+\n"  # Match the line of stars
+        r"(.*?)"  # Body (Captured)
+        r"-+\s*\n\s*ORCA\s+GEOMETRY\s+RELAXATION\s+STEP"  # Footer
     )
     per_gradient_stdout = re.findall(regex, stdout, flags=re.DOTALL)
     if not per_gradient_stdout:
@@ -249,7 +252,13 @@ def parse_version(contents: str) -> str:
     return match.group(1)
 
 
-@register(filetype=OrcaFileType.STDOUT, target="calcinfo_natoms")
+def parse_basename(contents: str) -> str:
+    """Parse the file basename from Orca stdout."""
+    regex = r"NAME\s+=\s+(.*)"
+    match = re_search(regex, contents)
+    return Path(match.group(1)).stem
+
+@register(filetype=OrcaFileType.STDOUT, target="calcinfo_natoms", required=False)
 def parse_natoms(contents: str) -> int:
     """Parse number of atoms value from Orca stdout.
 
@@ -262,10 +271,3 @@ def parse_natoms(contents: str) -> int:
     regex = r"Number of atoms\s*...\s*(\d+)"
     match = re_search(regex, contents)
     return int(match.group(1))
-
-
-def parse_basename(contents: str) -> str:
-    """Parse the file basename from Orca stdout."""
-    regex = r"NAME\s+=\s+(.*)"
-    match = re_search(regex, contents)
-    return Path(match.group(1)).stem
