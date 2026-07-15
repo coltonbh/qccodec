@@ -15,7 +15,7 @@ from qcdata import (
     StructuredInputs,
 )
 
-from .exceptions import DecoderError, EncoderError, MatchNotFoundError
+from .exceptions import DecoderError, EncoderError, MatchNotFoundError, ParserError
 from .models import (
     DataCollector,
     NativeInput,
@@ -79,8 +79,13 @@ def decode(
         logger.exception("Failed to import module qccodec.parsers.%s", program)
         raise DecoderError(f"No parsers found for program '{program}'.") from e
 
-    # Create a generator for stdout (if provided) and all parsable files in directory
-    files = mod.iter_files(stdout, directory)
+    calctype = CalcType(calctype)
+
+    # Create a list from stdout (if provided) and all parsable files in directory.
+    # File discovery stays program-local and dumb; decode enforces the parser registry
+    # contract after it knows which filetypes are present.
+    files = list(mod.iter_files(stdout, directory))
+    seen_filetypes = {filetype for filetype, _ in files}
 
     # Now iterate over the combined generator of all parsable files
     data_collector = DataCollector()
@@ -120,6 +125,21 @@ def decode(
                 logger.debug("Assigned parsed value to target '%s' on data_collector", spec.target) # noqa: E501
 
     logger.info("Completed processing files; final data_collector state: %s", data_collector) # noqa: E501
+    required_specs = [
+        spec
+        for spec in registry.get_parsers(program, calctype=calctype)
+        if spec.required
+        and spec.explicit_calctypes
+        and spec.filetype not in seen_filetypes
+    ]
+    if required_specs:
+        missing = sorted({spec.filetype.value for spec in required_specs})
+        data = RESULTS_TYPE_MAP[calctype](**data_collector)
+        raise ParserError(
+            "Missing required output artifact(s): " + ", ".join(missing),
+            data=data,
+        )
+
     # Finally, construct and return the StructuredData using the collected data.
     if as_dict:
         return dict(data_collector)

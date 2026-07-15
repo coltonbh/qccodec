@@ -6,9 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
-## [0.10.2] - 2026-06-10
-
 ### Fixed
+
+- `decode()` now raises a parser error when output artifacts required by parser specs for the requested calculation type are missing, while preserving any partial data parsed from available artifacts.
+
+## [0.10.2] - 2026-06-10
 - Marked ORCA `parse_natoms` as `required=False` to fix parsing of xTB log files.
 - Fixed gradient regex to account for arbitrary number of stars in log file.
 
