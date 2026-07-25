@@ -35,8 +35,22 @@ def test_decode_does_not_require_missing_global_artifacts(tmp_path):
     assert computed_props.gradient.tolist() == [[0.1, 0.2, 0.3]]
 
 
+def test_decode_orca_hessian_succeeds_without_cartesian_gradient(test_data_dir):
+    """Analytic Hessian jobs don't print a CARTESIAN GRADIENT block in Orca stdout,
+    decode() must not treat the missing gradient as a fatal error for Hessian calctype."""
+    orca_dir = test_data_dir / "orca"
+    stdout = (orca_dir / "water.hess.out").read_text()
+
+    computed_props = decode("orca", "hessian", stdout=stdout, directory=orca_dir)
+
+    assert computed_props.gradient is None
+    assert computed_props.hessian is not None
+
+
 def test_encode_raises_error_with_invalid_calctype(prog_input_factory):
-    prog_input_factory = prog_input_factory("transition_state")  # Not currently supported by crest encoder
+    prog_input_factory = prog_input_factory(
+        "transition_state"
+    )  # Not currently supported by crest encoder
     with pytest.raises(EncoderError):
         encode(prog_input_factory, "crest")
 

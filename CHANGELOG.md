@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Fixed
+
+- `decode()` no longer fails on ORCA Hessian calculations. Analytic Hessian jobs don't print a `CARTESIAN GRADIENT` block in ORCA stdout, so gradient parsing for `hessian` calctype now uses a dedicated, non-required `parse_gradient_hessian` parser instead of the `gradient`-calctype parser.
+
 ## [0.11.0] - 2026-07-15
 
 ### Fixed

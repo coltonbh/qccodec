@@ -6,6 +6,7 @@ from qcdata import CalcType
 from qccodec.parsers.orca import (
     parse_energy,
     parse_gradient,
+    parse_gradient_hessian,
     parse_hessian,
     parse_natoms,
     parse_trajectory,
@@ -68,6 +69,15 @@ test_cases = [
         calctype=CalcType.gradient,
         success=True,
         answer=gradients.water_revdsd,
+    ),
+    ParserTestCase(
+        name="Parse (absent) analytical gradient from hessian log",
+        parser=parse_gradient_hessian,
+        stdout=Path("water.hess.out"),
+        calctype=CalcType.hessian,
+        success=False,
+        decode_exc=False,
+        answer=None,
     ),
     ParserTestCase(
         name="Parse analytic hessian",

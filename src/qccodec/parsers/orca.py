@@ -91,7 +91,7 @@ def parse_energy(contents: str) -> float:
 
 @register(
     filetype=OrcaFileType.STDOUT,
-    calctypes=[CalcType.gradient, CalcType.hessian],
+    calctypes=[CalcType.gradient],
     target="gradient",
 )
 def parse_gradient(contents: str) -> list[list[float]]:
@@ -117,6 +117,20 @@ def parse_gradient(contents: str) -> list[list[float]]:
     line_matches = [re_search(line_regex, line) for line in block_lines]
     gradient = [list(map(float, match.groups())) for match in line_matches]
     return gradient
+
+
+@register(
+    filetype=OrcaFileType.STDOUT,
+    calctypes=[CalcType.hessian],
+    target="gradient",
+    required=False,
+)
+def parse_gradient_hessian(contents: str) -> list[list[float]]:
+    """Parse the gradient from Orca stdout for a hessian calculation.
+
+    Analytic Hessian jobs don't print CARTESIAN GRADIENT block.
+    """
+    return parse_gradient(contents)
 
 
 @register(
@@ -257,6 +271,7 @@ def parse_basename(contents: str) -> str:
     regex = r"NAME\s+=\s+(.*)"
     match = re_search(regex, contents)
     return Path(match.group(1)).stem
+
 
 @register(filetype=OrcaFileType.STDOUT, target="calcinfo_natoms", required=False)
 def parse_natoms(contents: str) -> int:
