@@ -199,7 +199,13 @@ def parse_trajectory(
         raise ParserError(f"Trajectory file does not exist: {file}")
 
     # Parse the structures, energies, and gradients
-    structures = Structure.open_multi(file)
+    # NOTE: trj_xyz carries no (charge, multiplicity), so it will
+    # silently default to (0, 1) unless supplied from input_data
+    structures = Structure.open_multi(
+        file,
+        charge=input_data.structure.charge,
+        multiplicity=input_data.structure.multiplicity,
+    )
 
     # Capture initialization stdout
     regex = r"^(.*?\*\*\*\*END\s+OF\s+INPUT\*\*\*\*\s*\n\s*=*)"

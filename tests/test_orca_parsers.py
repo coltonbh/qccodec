@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import pytest
-from qcdata import CalcType
+from qcdata import CalcType, Model, ProgramInput, Structure
 
 from qccodec.parsers.orca import (
     parse_energy,
@@ -114,6 +114,36 @@ test_cases = [
         answer=trajectories.trajectory,
         clear_registry=False,
         extra_files=["water.opt_trj.xyz"],
+    ),
+    ParserTestCase(
+        name="Parse trajectory (m=2)",
+        parser=parse_trajectory,
+        stdout=Path("ch3.opt.out"),
+        calctype=CalcType.optimization,
+        success=True,
+        answer=trajectories.trajectory_ch3,
+        clear_registry=False,
+        program_input=ProgramInput(
+            structure=Structure(
+                symbols=["C", "H", "H", "H"],
+                geometry=[
+                    [
+                        2.2960172429784643e-07,
+                        -5.47453658675606e-07,
+                        -0.13371279750931814,
+                    ],
+                    [1.20598062158438, 1.4745349158139784, 0.5311114980010905],
+                    [-1.879974623959173, 0.3071463406992686, 0.5311113957669071],
+                    [0.6739912652954723, -1.7816747322337971, 0.5311139136379973],
+                ],
+                charge=0,
+                multiplicity=2,
+            ),
+            model=Model(method="xtb"),
+            calctype=CalcType.optimization,
+        ),
+        extra_files=["ch3.opt_trj.xyz"],
+        extra_files_names=["orca_trj.xyz"],
     ),
 ]
 
