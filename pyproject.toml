@@ -36,11 +36,11 @@ keywords = [
 ]
 
 [project.urls]
-Homepage = 'https://github.com/coltonbh/qccodec'
-Documentation = 'https://github.com/coltonbh/qccodec#readme'
-Source = 'https://github.com/coltonbh/qccodec'
-Changelog = 'https://github.com/coltonbh/qccodec/blob/master/CHANGELOG.md'
-"Bug Tracker" = 'https://github.com/coltonbh/qccodec/issues'
+Homepage = 'https://github.com/atomsforhumanity/qccodec'
+Documentation = 'https://github.com/atomsforhumanity/qccodec#readme'
+Source = 'https://github.com/atomsforhumanity/qccodec'
+Changelog = 'https://github.com/atomsforhumanity/qccodec/blob/master/CHANGELOG.md'
+"Bug Tracker" = 'https://github.com/atomsforhumanity/qccodec/issues'
 
 [dependency-groups]
 dev = [
