@@ -151,7 +151,8 @@ def parse_hessian(contents: str) -> list[list[float]]:
     dim = int(entry.splitlines()[1])
 
     # Split the hessian entry into blocks on lines of the form '  0  1  2  3 ...'
-    split_result = re.split(r"^\s*(?:\d+\s+)+\d+\s*$", entry, flags=re.MULTILINE)
+    # (the final block may have only a single column index, e.g. '  5')
+    split_result = re.split(r"^\s*\d+(?:\s+\d+)*\s*$", entry, flags=re.MULTILINE)
     if not len(split_result) > 1:
         raise ParserError(f"Failed to parse blocks in hessian entry: {entry}")
 

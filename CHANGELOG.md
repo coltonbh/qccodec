@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - `decode()` no longer fails on ORCA Hessian calculations. Analytic Hessian jobs don't print a `CARTESIAN GRADIENT` block in ORCA stdout, so gradient parsing for `hessian` calctype now uses a dedicated, non-required `parse_gradient_hessian` parser instead of the `gradient`-calctype parser.
 - ORCA optimization trajectory parsing now passes `charge` and `multiplicity` from `input_data.structure` into each `Structure` parsed from the `_trj.xyz` file instead of silently defaulting to `(0, 1)`.
+- ORCA `parse_hessian()` recognizes that the final Hessian block entry may only contain a single column. See `tests/data/orca/single_column.hess` for an example.
 
 ## [0.11.0] - 2026-07-15
 

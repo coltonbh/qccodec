@@ -4,6 +4,8 @@ from qccodec.codec import decode, encode
 from qccodec.encoders import terachem
 from qccodec.exceptions import EncoderError, ParserError
 
+from .data.orca.answers import hessians
+
 
 def test_main_terachem_energy(terachem_file):
     """Test the main terachem energy encoder."""
@@ -44,7 +46,7 @@ def test_decode_orca_hessian_succeeds_without_cartesian_gradient(test_data_dir):
     computed_props = decode("orca", "hessian", stdout=stdout, directory=orca_dir)
 
     assert computed_props.gradient is None
-    assert computed_props.hessian is not None
+    assert computed_props.hessian.tolist() == hessians.water_b3lyp
 
 
 def test_encode_raises_error_with_invalid_calctype(prog_input_factory):

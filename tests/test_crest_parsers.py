@@ -189,7 +189,9 @@ def test_crest_parsers(test_data_dir, prog_input_factory, tmp_path, test_case):
 ####################################################
 
 
-def test_parse_conformers_charge_multiplicity_updates(test_data_dir, prog_input_factory):
+def test_parse_conformers_charge_multiplicity_updates(
+    test_data_dir, prog_input_factory
+):
     # Change charge and multiplicity in prog_input
     prog_input = prog_input_factory("conformer_search")
     prog_input_dict = prog_input.model_dump()

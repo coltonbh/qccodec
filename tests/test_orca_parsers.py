@@ -98,6 +98,15 @@ test_cases = [
         extra_files=["water.numhess.hess"],
     ),
     ParserTestCase(
+        name="Parse hessian with single-column final block",
+        parser=parse_hessian,
+        stdout=Path("single_column.out"),
+        calctype=CalcType.hessian,
+        success=True,
+        answer=hessians.single_column,
+        extra_files=["single_column.hess"],
+    ),
+    ParserTestCase(
         name="Parse number of atoms water",
         parser=parse_natoms,
         stdout=Path("water.energy.out"),
