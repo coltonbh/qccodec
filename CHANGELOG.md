@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.11.2] - 2026-08-28
+
 ### Fixed
 
 - `decode()` no longer fails on ORCA Hessian calculations. Analytic Hessian jobs don't print a `CARTESIAN GRADIENT` block in ORCA stdout, so gradient parsing for `hessian` calctype now uses a dedicated, non-required `parse_gradient_hessian` parser instead of the `gradient`-calctype parser.
@@ -287,7 +289,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Can return either `AtomicResult` or `FailedOperation` objects depending on whether calculation succeeded or failed.
 - Tests for all parsers and the main `parse` function.
 
-[unreleased]: https://github.com/atomsforhumanity/qccodec/compare/0.11.1...HEAD
+[unreleased]: https://github.com/atomsforhumanity/qccodec/compare/0.11.2...HEAD
+[0.11.2]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.11.2
 [0.11.1]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.11.1
 [0.11.1]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.11.1
 [0.11.0]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.11.0
