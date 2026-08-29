@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - ORCA optimization trajectory parsing now passes `charge` and `multiplicity` from `input_data.structure` into each `Structure` parsed from the `_trj.xyz` file instead of silently defaulting to `(0, 1)`.
 - ORCA `parse_hessian()` recognizes that the final Hessian block entry may only contain a single column. See `tests/data/orca/single_column.hess` for an example.
 
+## [0.11.1] - 2026-08-26
+
+- Updated GitHub references from `coltonbh` to `atomsforhumanity`.
+
 ## [0.11.0] - 2026-07-15
 
 ### Fixed
@@ -19,6 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - `decode()` now raises a parser error when output artifacts required by parser specs for the requested calculation type are missing, while preserving any partial data parsed from available artifacts.
 
 ## [0.10.2] - 2026-06-10
+
 - Marked ORCA `parse_natoms` as `required=False` to fix parsing of xTB log files.
 - Fixed gradient regex to account for arbitrary number of stars in log file.
 
@@ -26,20 +31,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 
-- ORCA encoder no longer writes `None` if no basis (e.g., when no basis is needed for an XTB calculation). [#42](https://github.com/coltonbh/qccodec/pull/42) by [TroyNSmith](https://github.com/TroyNSmith)
+- ORCA encoder no longer writes `None` if no basis (e.g., when no basis is needed for an XTB calculation). [#42](https://github.com/atomsforhumanity/qccodec/pull/42) by [TroyNSmith](https://github.com/TroyNSmith)
 
 ## [0.10.0] - 2026-03-26
 
 ### Changed
 
-- Updated the codebase, tests, and documentation to use `qcdata` in place of `qcio`. [#41](https://github.com/coltonbh/qccodec/pull/41)
-- Replaced deprecated `Results` usage with `ProgramOutput` in parser trajectories and test fixtures. [#41](https://github.com/coltonbh/qccodec/pull/41)
+- Updated the codebase, tests, and documentation to use `qcdata` in place of `qcio`. [#41](https://github.com/atomsforhumanity/qccodec/pull/41)
+- Replaced deprecated `Results` usage with `ProgramOutput` in parser trajectories and test fixtures. [#41](https://github.com/atomsforhumanity/qccodec/pull/41)
 
 ## [0.9.1] - 2025-11-14
 
 ### Added
 
-- Parsers and encoders for ORCA (by [@avcopan](https://github.com/avcopan)) [#33](https://github.com/coltonbh/qccodec/pull/33), [#36](https://github.com/coltonbh/qccodec/pull/36), and [#40](https://github.com/coltonbh/qccodec/pull/40).
+- Parsers and encoders for ORCA (by [@avcopan](https://github.com/avcopan)) [#33](https://github.com/atomsforhumanity/qccodec/pull/33), [#36](https://github.com/atomsforhumanity/qccodec/pull/36), and [#40](https://github.com/atomsforhumanity/qccodec/pull/40).
 
 ## [0.9.0] - 2025-10-09
 
@@ -57,11 +62,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Removed
 
-- 🚨Python 3.9 support. Minimum supported version is now 3.10. [#37](https://github.com/coltonbh/qccodec/pull/37).
+- 🚨Python 3.9 support. Minimum supported version is now 3.10. [#37](https://github.com/atomsforhumanity/qccodec/pull/37).
 
 ### Changed
 
-- 🚨 Updated to `qcio>=0.15.0` which incorporates new `qcio` nomenclature. [#37](https://github.com/coltonbh/qccodec/pull/37)
+- 🚨 Updated to `qcio>=0.15.0` which incorporates new `qcio` nomenclature. [#37](https://github.com/atomsforhumanity/qccodec/pull/37)
 - Changed TeraChem encoder `Enum` lookups to compare `Enums` directly instead of string value.
 - Updated `prog_inp` pytest fixture to have no keywords so that it can be reused in other outside of TeraChem.
 
@@ -254,8 +259,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 
-- Dropped support for `QCSchema` models and changed to `qcio` (now [qcdata](https://github.com/coltonbh/qcdata)) data models.
-- `parse` function now raises `NotImplementedError` and the default use case is to use `parse_computed_prop` instead and ignore inputs and provenance data. This is the minimum spec since QC programs can be powered using structured inputs and [qcop](https://github.com/coltonbh/qcop). I may go back to parsing entire `SinglePointSuccess/FailedOutput` objects if use cases arise.
+- Dropped support for `QCSchema` models and changed to `qcio` (now [qcdata](https://github.com/atomsforhumanity/qcdata)) data models.
+- `parse` function now raises `NotImplementedError` and the default use case is to use `parse_computed_prop` instead and ignore inputs and provenance data. This is the minimum spec since QC programs can be powered using structured inputs and [qcop](https://github.com/atomsforhumanity/qccompute). I may go back to parsing entire `SinglePointSuccess/FailedOutput` objects if use cases arise.
 
 ## [0.2.1] - 2023-03-25
 
@@ -282,38 +287,40 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Can return either `AtomicResult` or `FailedOperation` objects depending on whether calculation succeeded or failed.
 - Tests for all parsers and the main `parse` function.
 
-[unreleased]: https://github.com/coltonbh/qccodec/compare/0.11.0...HEAD
-[0.11.0]: https://github.com/coltonbh/qccodec/releases/tag/0.11.0
-[0.10.2]: https://github.com/coltonbh/qccodec/releases/tag/0.10.2
-[0.10.1]: https://github.com/coltonbh/qccodec/releases/tag/0.10.1
-[0.10.0]: https://github.com/coltonbh/qccodec/releases/tag/0.10.0
-[0.9.1]: https://github.com/coltonbh/qccodec/releases/tag/0.9.1
-[0.9.0]: https://github.com/coltonbh/qccodec/releases/tag/0.9.0
-[0.8.1]: https://github.com/coltonbh/qccodec/releases/tag/0.8.1
-[0.8.0]: https://github.com/coltonbh/qccodec/releases/tag/0.8.0
-[0.7.8]: https://github.com/coltonbh/qccodec/releases/tag/0.7.8
-[0.7.7]: https://github.com/coltonbh/qccodec/releases/tag/0.7.7
-[0.7.6]: https://github.com/coltonbh/qccodec/releases/tag/0.7.6
-[0.7.5]: https://github.com/coltonbh/qccodec/releases/tag/0.7.5
-[0.7.4]: https://github.com/coltonbh/qccodec/releases/tag/0.7.4
-[0.7.3]: https://github.com/coltonbh/qccodec/releases/tag/0.7.3
-[0.7.2]: https://github.com/coltonbh/qccodec/releases/tag/0.7.2
-[0.7.1]: https://github.com/coltonbh/qccodec/releases/tag/0.7.1
-[0.7.0]: https://github.com/coltonbh/qccodec/releases/tag/0.7.0
-[0.6.4]: https://github.com/coltonbh/qccodec/releases/tag/0.6.4
-[0.6.3]: https://github.com/coltonbh/qccodec/releases/tag/0.6.3
-[0.6.2]: https://github.com/coltonbh/qccodec/releases/tag/0.6.2
-[0.6.1]: https://github.com/coltonbh/qccodec/releases/tag/0.6.1
-[0.6.0]: https://github.com/coltonbh/qccodec/releases/tag/0.6.0
-[0.5.3]: https://github.com/coltonbh/qccodec/releases/tag/0.5.3
-[0.5.2]: https://github.com/coltonbh/qccodec/releases/tag/0.5.2
-[0.5.1]: https://github.com/coltonbh/qccodec/releases/tag/0.5.1
-[0.5.0]: https://github.com/coltonbh/qccodec/releases/tag/0.5.0
-[0.4.1]: https://github.com/coltonbh/qccodec/releases/tag/0.4.1
-[0.4.0]: https://github.com/coltonbh/qccodec/releases/tag/0.4.0
-[0.3.2]: https://github.com/coltonbh/qccodec/releases/tag/0.3.2
-[0.3.1]: https://github.com/coltonbh/qccodec/releases/tag/0.3.1
-[0.3.0]: https://github.com/coltonbh/qccodec/releases/tag/0.3.0
-[0.2.1]: https://github.com/coltonbh/qccodec/releases/tag/0.2.1
-[0.2.0]: https://github.com/coltonbh/qccodec/releases/tag/0.2.0
-[0.1.0]: https://github.com/coltonbh/qccodec/releases/tag/0.1.0
+[unreleased]: https://github.com/atomsforhumanity/qccodec/compare/0.11.1...HEAD
+[0.11.1]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.11.1
+[0.11.1]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.11.1
+[0.11.0]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.11.0
+[0.10.2]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.10.2
+[0.10.1]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.10.1
+[0.10.0]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.10.0
+[0.9.1]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.9.1
+[0.9.0]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.9.0
+[0.8.1]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.8.1
+[0.8.0]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.8.0
+[0.7.8]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.7.8
+[0.7.7]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.7.7
+[0.7.6]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.7.6
+[0.7.5]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.7.5
+[0.7.4]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.7.4
+[0.7.3]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.7.3
+[0.7.2]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.7.2
+[0.7.1]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.7.1
+[0.7.0]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.7.0
+[0.6.4]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.6.4
+[0.6.3]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.6.3
+[0.6.2]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.6.2
+[0.6.1]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.6.1
+[0.6.0]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.6.0
+[0.5.3]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.5.3
+[0.5.2]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.5.2
+[0.5.1]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.5.1
+[0.5.0]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.5.0
+[0.4.1]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.4.1
+[0.4.0]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.4.0
+[0.3.2]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.3.2
+[0.3.1]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.3.1
+[0.3.0]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.3.0
+[0.2.1]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.2.1
+[0.2.0]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.2.0
+[0.1.0]: https://github.com/atomsforhumanity/qccodec/releases/tag/0.1.0

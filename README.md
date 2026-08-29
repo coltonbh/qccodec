@@ -1,21 +1,24 @@
 # qccodec
 
-Encode `qcdata` inputs into native quantum chemistry files and decode (parse) program outputs into structured qcdata objects.. Uses data structures from [qcdata](https://github.com/coltonbh/qcdata).
+Encode `qcdata` inputs into native quantum chemistry files and decode (parse) program outputs into structured qcdata objects.. Uses data structures from [qcdata](https://github.com/atomsforhumanity/qcdata).
 
 [![image](https://img.shields.io/pypi/v/qccodec.svg)](https://pypi.python.org/pypi/qccodec)
 [![image](https://img.shields.io/pypi/l/qccodec.svg)](https://pypi.python.org/pypi/qccodec)
 [![image](https://img.shields.io/pypi/pyversions/qccodec.svg)](https://pypi.python.org/pypi/qccodec)
-[![Actions status](https://github.com/coltonbh/qccodec/workflows/Tests/badge.svg)](https://github.com/coltonbh/qccodec/actions)
-[![Actions status](https://github.com/coltonbh/qccodec/workflows/Basic%20Code%20Quality/badge.svg)](https://github.com/coltonbh/qccodec/actions)
+[![Actions status](https://github.com/atomsforhumanity/qccodec/workflows/Tests/badge.svg)](https://github.com/atomsforhumanity/qccodec/actions)
+[![Actions status](https://github.com/atomsforhumanity/qccodec/workflows/Basic%20Code%20Quality/badge.svg)](https://github.com/atomsforhumanity/qccodec/actions)
 
 `qccodec` works in harmony with a suite of other quantum chemistry tools for fast, structured, and interoperable quantum chemistry.
 
 ## The QC Suite of Programs
 
-- [qcconst](https://github.com/coltonbh/qcconst) - Physical constants, conversion factors, and a periodic table with clear source information for every value.
-- [qcdata](https://github.com/coltonbh/qcdata) - Beautiful and user friendly data structures for quantum chemistry, featuring seamless Jupyter Notebook visualizations. [Documentation](https://qcdata.coltonhicks.com)
-- [qccodec](https://github.com/coltonbh/qccodec) - Encode `qcdata` inputs into native quantum chemistry files and decode (parse) program outputs into structured qcdata objects.
-- [qcop](https://github.com/coltonbh/qcop) - A package for operating quantum chemistry programs using `qcdata` standardized data structures. Compatible with `TeraChem`, `psi4`, `QChem`, `NWChem`, `ORCA`, `Molpro`, `geomeTRIC` and many more.
+The QC Suite works in harmony to provide fast, structured, and interoperable quantum chemistry tools.
+
+- [qcconst](https://github.com/atomsforhumanity/qcconst) - Physical constants, conversion factors, and a periodic table with clear source information for every value.
+- [qcdata](https://github.com/atomsforhumanity/qcdata) - Elegant and intuitive data structures for quantum chemistry, featuring seamless Jupyter Notebook visualizations. [Documentation](https://qcdata.docs.atomsforhumanity.org)
+- [qcinf](https://github.com/atomsforhumanity/qcinf) - Cheminformatics algorithms and structure utilities using standardized [qcdata](https://qcdata.docs.atomsforhumanity.org/) data structures.
+- [qccodec](https://github.com/atomsforhumanity/qccodec) - A package for translating between standardized [qcdata](https://github.com/atomsforhumanity/qcdata) data structures and native QC program inputs and outputs.
+- [qccompute](https://github.com/atomsforhumanity/qccompute) - A package for operating quantum chemistry programs using standardized [qcdata](https://qcdata.docs.atomsforhumanity.org/) data structures. Compatible with `TeraChem`, `psi4`, `QChem`, `NWChem`, `ORCA`, `Molpro`, `geomeTRIC` and many more.
 - [BigChem](https://github.com/mtzgroup/bigchem) - A distributed application for running quantum chemistry calculations at scale across clusters of computers or the cloud. Bring multi-node scaling to your favorite quantum chemistry program.
 - `ChemCloud` - A [web application](https://github.com/mtzgroup/chemcloud-server) and associated [Python client](https://github.com/mtzgroup/chemcloud-client) for exposing a BigChem cluster securely over the internet.
 
@@ -95,4 +98,4 @@ Encode `qcdata` inputs into native quantum chemistry files and decode (parse) pr
 
 Please see the [contributing guide](./CONTRIBUTING.md) for details on how to contribute new parsers to this project :)
 
-If there's data you'd like parsed from output files or want to support input files for a new program, please open an issue in this repo explaining the data items you'd like parsed and include an example output file containing the data, like [this](https://github.com/coltonbh/qccodec/issues/2).
+If there's data you'd like parsed from output files or want to support input files for a new program, please open an issue in this repo explaining the data items you'd like parsed and include an example output file containing the data, like [this](https://github.com/atomsforhumanity/qccodec/issues/2).
