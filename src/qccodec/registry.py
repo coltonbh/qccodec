@@ -80,7 +80,7 @@ class ParserRegistry:
             ):
                 raise RegistryError(
                     f"Duplicate parser target '{parser_spec.target}' and calctype "
-                    f"'{set(parser_spec.calctypes)& set(registered_spec.calctypes)}' "
+                    f"'{set(parser_spec.calctypes) & set(registered_spec.calctypes)}' "
                     f"registered for program '{parser_spec.program}'."
                 )
         self.registry[parser_spec.program].append(parser_spec)

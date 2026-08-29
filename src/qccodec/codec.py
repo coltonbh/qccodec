@@ -48,7 +48,7 @@ def decode(
     as_dict: bool = False,
 ) -> StructuredData | dict[str, Any]:
     """Decode the output of a quantum chemistry program into a standardized output.
-    
+
     Args:
         program: The QC program that generated the output file.
         calctype: The type of calculation that was run.
@@ -56,8 +56,8 @@ def decode(
         directory: The directory containing the output files.
         input_data: The input data used for the calculation.
             This is used to provide additional context for the parsers.
-        as_dict: If True, return the results as a dictionary instead of a 
-            StructuredData object. Used mostly for testing purposes to enable 
+        as_dict: If True, return the results as a dictionary instead of a
+            StructuredData object. Used mostly for testing purposes to enable
             returning parsed data that isn't a fully valid StructuredData object.
 
     Returns:
@@ -93,38 +93,66 @@ def decode(
         # Look up the parsers for the given program, filetype, and calctype
         logger.debug("Processing file with filetype: %s", filetype)
         parser_specs = registry.get_parsers(program, filetype, calctype)
-        logger.info("Found %d parser(s) for program '%s', filetype '%s', calctype '%s'", len(parser_specs), program, filetype, calctype) # noqa: E501
-        
+        logger.info(
+            "Found %d parser(s) for program '%s', filetype '%s', calctype '%s'",
+            len(parser_specs),
+            program,
+            filetype,
+            calctype,
+        )  # noqa: E501
+
         for spec in parser_specs:
-            logger.debug("Running parser '%s' for target '%s'", spec.parser.__name__, spec.target) # noqa: E501
+            logger.debug(
+                "Running parser '%s' for target '%s'", spec.parser.__name__, spec.target
+            )  # noqa: E501
             # Parse the contents using the parser
             try:
                 if spec.filetype == "directory":
                     parsed_value: Any = spec.parser(directory, stdout, input_data)
                 else:
                     parsed_value = spec.parser(contents)
-                logger.info("Parser '%s' succeeded; returned value: %s", spec.parser.__name__, parsed_value) # noqa: E501
+                logger.info(
+                    "Parser '%s' succeeded; returned value: %s",
+                    spec.parser.__name__,
+                    parsed_value,
+                )  # noqa: E501
             # Raised if the parser can't find its data
             except MatchNotFoundError as e:
                 if spec.required:
-                    logger.error("Required parser '%s' failed; raising exception", spec.parser.__name__) # noqa: E501
+                    logger.error(
+                        "Required parser '%s' failed; raising exception",
+                        spec.parser.__name__,
+                    )  # noqa: E501
                     raise
                 else:
-                    logger.info("Parser '%s' did not find a match but is not required.", spec.parser.__name__) # noqa: E501
+                    logger.info(
+                        "Parser '%s' did not find a match but is not required.",
+                        spec.parser.__name__,
+                    )  # noqa: E501
             # Place the parsed value into the data collector
             else:
                 # If the parser returns a dictionary, assign each key-value pair to the data collector
                 if isinstance(parsed_value, dict):
                     for key, value in parsed_value.items():
                         data_collector.add_data(key, value)
-                        logger.debug("Assigned parsed value to target '%s' on data_collector", (spec.target, key))
+                        logger.debug(
+                            "Assigned parsed value to target '%s' on data_collector",
+                            (spec.target, key),
+                        )
                 # Otherwise, assign the parsed value to the specified target
                 else:
-                    assert spec.target is not None, "Target must be specified for non-dictionary parsed values." # for mypy
+                    assert spec.target is not None, (
+                        "Target must be specified for non-dictionary parsed values."
+                    )  # for mypy
                     data_collector.add_data(spec.target, parsed_value)
-                logger.debug("Assigned parsed value to target '%s' on data_collector", spec.target) # noqa: E501
+                logger.debug(
+                    "Assigned parsed value to target '%s' on data_collector",
+                    spec.target,
+                )  # noqa: E501
 
-    logger.info("Completed processing files; final data_collector state: %s", data_collector) # noqa: E501
+    logger.info(
+        "Completed processing files; final data_collector state: %s", data_collector
+    )  # noqa: E501
     required_specs = [
         spec
         for spec in registry.get_parsers(program, calctype=calctype)
@@ -144,6 +172,7 @@ def decode(
     if as_dict:
         return dict(data_collector)
     return RESULTS_TYPE_MAP[calctype](**data_collector)
+
 
 def encode(inp_data: ProgramInput, program: str) -> NativeInput:
     """Encode a ProgramInput object to a NativeInput object.

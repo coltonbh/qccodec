@@ -30,8 +30,8 @@ class DataCollector(dict):
 
 @dataclass
 class NativeInput:
-    """Native input file data for a quantum chemistry program. 
-    
+    """Native input file data for a quantum chemistry program.
+
     Writing these files to disk should produce a valid input.
 
     Attributes:

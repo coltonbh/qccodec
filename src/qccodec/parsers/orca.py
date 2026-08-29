@@ -91,7 +91,7 @@ def parse_energy(contents: str) -> float:
 
 @register(
     filetype=OrcaFileType.STDOUT,
-    calctypes=[CalcType.gradient, CalcType.hessian],
+    calctypes=[CalcType.gradient],
     target="gradient",
 )
 def parse_gradient(contents: str) -> list[list[float]]:
@@ -120,6 +120,20 @@ def parse_gradient(contents: str) -> list[list[float]]:
 
 
 @register(
+    filetype=OrcaFileType.STDOUT,
+    calctypes=[CalcType.hessian],
+    target="gradient",
+    required=False,
+)
+def parse_gradient_hessian(contents: str) -> list[list[float]]:
+    """Parse the gradient from Orca stdout for a hessian calculation.
+
+    Analytic Hessian jobs don't print CARTESIAN GRADIENT block.
+    """
+    return parse_gradient(contents)
+
+
+@register(
     filetype=OrcaFileType.HESS,
     calctypes=[CalcType.hessian],
     target="hessian",
@@ -137,7 +151,8 @@ def parse_hessian(contents: str) -> list[list[float]]:
     dim = int(entry.splitlines()[1])
 
     # Split the hessian entry into blocks on lines of the form '  0  1  2  3 ...'
-    split_result = re.split(r"^\s*(?:\d+\s+)+\d+\s*$", entry, flags=re.MULTILINE)
+    # (the final block may have only a single column index, e.g. '  5')
+    split_result = re.split(r"^\s*\d+(?:\s+\d+)*\s*$", entry, flags=re.MULTILINE)
     if not len(split_result) > 1:
         raise ParserError(f"Failed to parse blocks in hessian entry: {entry}")
 
@@ -185,7 +200,13 @@ def parse_trajectory(
         raise ParserError(f"Trajectory file does not exist: {file}")
 
     # Parse the structures, energies, and gradients
-    structures = Structure.open_multi(file)
+    # NOTE: trj_xyz carries no (charge, multiplicity), so it will
+    # silently default to (0, 1) unless supplied from input_data
+    structures = Structure.open_multi(
+        file,
+        charge=input_data.structure.charge,
+        multiplicity=input_data.structure.multiplicity,
+    )
 
     # Capture initialization stdout
     regex = r"^(.*?\*\*\*\*END\s+OF\s+INPUT\*\*\*\*\s*\n\s*=*)"
@@ -257,6 +278,7 @@ def parse_basename(contents: str) -> str:
     regex = r"NAME\s+=\s+(.*)"
     match = re_search(regex, contents)
     return Path(match.group(1)).stem
+
 
 @register(filetype=OrcaFileType.STDOUT, target="calcinfo_natoms", required=False)
 def parse_natoms(contents: str) -> int:
